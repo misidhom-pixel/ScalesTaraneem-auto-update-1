@@ -1238,14 +1238,25 @@
 
         // عرض قائمة الترانيم المضافة للتحضير
         for (var i = 0; i < prep.songIds.length; i++) {
-            var songId = prep.songIds[i];
+            var item = prep.songIds[i];
+            
+            // استخراج معرف الترنيمة والسلم المخصص المتوافق برمجياً مع الأرشيف القديم والجديد
+            var songId, customKey;
+            if (typeof item === 'object' && item !== null) {
+                songId = item.id;
+                customKey = item.customKey;
+            } else {
+                songId = item;
+                customKey = null;
+            }
+
             var song = null;
             for (var x = 0; x < songs.length; x++) {
                 if (songs[x].id === songId) { song = songs[x]; break; }
             }
             if (!song) continue;
 
-            (function(s, pId) {
+            (function(s, pId, index, cKey) {
                 var div = document.createElement('div');
                 div.className = 'song-item';
                 div.style.display = 'flex';
@@ -1256,7 +1267,40 @@
                 var titleSpan = document.createElement('span');
                 titleSpan.style.flex = '1';
                 titleSpan.style.textAlign = 'right';
-                titleSpan.innerHTML = '<bdi>' + s.title + '</bdi>' + (s.key ? ' <span style="font-size:0.75em; color:#888;">(' + s.key + ')</span>' : '');
+                
+                // تحديد النص واللون والخط للسلم الموسيقي
+                var keyToDisplay = cKey ? cKey : (s.key || "No Scale");
+                var keyColor = cKey ? '#3498db' : '#888';
+                var keyWeight = cKey ? 'bold' : 'normal';
+
+                titleSpan.innerHTML = '<bdi>' + s.title + '</bdi> <span class="change-key-btn" style="font-size:0.75em; color:' + keyColor + '; font-weight:' + keyWeight + '; cursor:pointer; text-decoration:underline;" title="اضغط لتغيير السلم داخل هذا التحضير فقط">(' + keyToDisplay + ')</span>';
+
+                // ربط حدث تغيير السلم عند الضغط على بادج السلم نفسه
+                var keyBtn = titleSpan.querySelector('.change-key-btn');
+                keyBtn.onclick = function(e) {
+                    e.stopPropagation(); // منع فتح كلمات الترنيمة عند الرغبة في تعديل السلم
+                    var currentKeyVal = cKey ? cKey : (s.key || "No Scale");
+                    var newKey = prompt("تغيير السلم الموسيقي لهذه الترنيمة (داخل هذا التحضير فقط):\n\nمثال: C, Cm, D, Dm, Eb, F#m...\n(اكتب السلم الجديد أو اتركه فارغاً للرجوع للأصلي)", currentKeyVal);
+                    if (newKey !== null) {
+                        var cleanedKey = newKey.trim();
+                        var targetPrep = null;
+                        for (var x = 0; x < preparations.length; x++) {
+                            if (preparations[x].id === pId) { targetPrep = preparations[x]; break; }
+                        }
+                        if (targetPrep) {
+                            if (cleanedKey === "" || cleanedKey === (s.key || "No Scale")) {
+                                // الرجوع للسلم الأصلي
+                                targetPrep.songIds[index] = s.id;
+                            } else {
+                                // حفظ السلم المخصص
+                                targetPrep.songIds[index] = { id: s.id, customKey: cleanedKey };
+                            }
+                            savePreparations();
+                            renderPreparationDetail(pId);
+                            renderKeys();
+                        }
+                    }
+                };
 
                 var removeBtn = document.createElement('span');
                 removeBtn.style.color = '#e74c3c';
@@ -1283,13 +1327,14 @@
                     
                     songDisplayHeader.style.display = 'flex';
                     displayTitle.innerHTML = '<bdi>' + s.title + '</bdi>';
-                    displayKey.innerText = "(" + (s.key || "No Scale") + ")";
+                    // عرض السلم المخصص في هيدر الكلمات بدلاً من السلم الأصلي
+                    displayKey.innerText = "(" + keyToDisplay + ")";
                     
                     document.getElementById('lyrics-view').scrollTop = 0;
                 };
 
                 titlesList.appendChild(div);
-            })(song, prep.id);
+            })(song, prep.id, i, customKey);
         }
     }
 
@@ -1302,8 +1347,10 @@
             if (prep) {
                 var tempIds = [];
                 for (var x = 0; x < prep.songIds.length; x++) {
-                    if (prep.songIds[x] !== songId) {
-                        tempIds.push(prep.songIds[x]);
+                    var item = prep.songIds[x];
+                    var currId = (typeof item === 'object' && item !== null) ? item.id : item;
+                    if (currId !== songId) {
+                        tempIds.push(item);
                     }
                 }
                 prep.songIds = tempIds;
@@ -1357,7 +1404,9 @@
             // تحقق يدوي متوافق من عدم تكرار الترانيم
             var isAlreadyAdded = false;
             for (var k = 0; k < activePrep.songIds.length; k++) {
-                if (activePrep.songIds[k] === s.id) {
+                var item = activePrep.songIds[k];
+                var currId = (typeof item === 'object' && item !== null) ? item.id : item;
+                if (currId === s.id) {
                     isAlreadyAdded = true;
                     break;
                 }
@@ -1446,7 +1495,9 @@
             // تحقق يدوي متوافق من عدم التكرار
             var isExist = false;
             for (var k = 0; k < activePrep.songIds.length; k++) {
-                if (activePrep.songIds[k] === songId) { isExist = true; break; }
+                var item = activePrep.songIds[k];
+                var currId = (typeof item === 'object' && item !== null) ? item.id : item;
+                if (currId === songId) { isExist = true; break; }
             }
 
             if (!isExist) {
@@ -1648,8 +1699,10 @@
             for (var k = 0; k < preparations.length; k++) {
                 var tempIds = [];
                 for (var x = 0; x < preparations[k].songIds.length; x++) {
-                    if (preparations[k].songIds[x] !== id) {
-                        tempIds.push(preparations[k].songIds[x]);
+                    var item = preparations[k].songIds[x];
+                    var currId = (typeof item === 'object' && item !== null) ? item.id : item;
+                    if (currId !== id) {
+                        tempIds.push(item);
                     }
                 }
                 preparations[k].songIds = tempIds;
