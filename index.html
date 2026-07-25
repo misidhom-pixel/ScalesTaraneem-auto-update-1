@@ -20,7 +20,7 @@
 
         /* --- Header --- */
         header {
-            background-color: #2c3e50; color: white; height: 60px;
+            background-color: #2c3e50; color: white; height: 84px;
             display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
             padding: 0 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 100;
             -webkit-flex-shrink: 0; flex-shrink: 0;
@@ -34,7 +34,6 @@
         header h1 { font-size: 1.1rem; margin: 0; line-height: 1.2; font-weight: bold; }
         .total-badge { font-size: 0.7rem; color: #bdc3c7; font-weight: normal; }
 
-        /* تعديل: دفع شريط البحث لجهة اليمين قليلاً */
         .header-center {
             -webkit-flex: 1; flex: 1; padding: 0 10px;
             display: -webkit-flex; display: flex; 
@@ -64,18 +63,67 @@
         .history-item:hover { background-color: #f0f0f0; }
         .history-text { -webkit-flex: 1; flex: 1; text-align: right; }
         .history-delete { color: red; font-weight: bold; padding: 0 10px; }
+        .prep-song-delete {
+            color: #c0392b; font-weight: 900; font-size: 1.3rem;
+            padding: 6px 12px; cursor: pointer; flex-shrink: 0; line-height: 1;
+        }
+        .prep-song-delete:hover { color: #e74c3c; }
 
-        .header-left { display: -webkit-flex; display: flex; margin-left: auto; }
+        /* منطقة الأزرار اليسرى وتنسيق الستوب واتش */
+        .header-left { display: -webkit-flex; display: flex; margin-left: auto; align-items: center; gap: 5px; }
         
         .header-btn {
             background-color: #34495e; border: 1px solid #5d6d7e; color: white;
-            padding: 5px 10px; margin-left: 5px; border-radius: 5px;
+            padding: 5px 10px; border-radius: 5px;
             font-family: 'Cairo', sans-serif; cursor: pointer; font-size: 0.8rem; height: 35px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* أزرار كبيرة (فُل سكرين / سيتينج في الهيدر، وباك / نايت مود في لوحة التحكم) - ضعف الحجم تقريباً */
+        .header-btn-lg {
+            padding: 10px 22px !important;
+            height: 70px !important;
+            font-size: 1.5rem !important;
+            border-radius: 8px !important;
+        }
+
+        /* تنسيق العداد الذكي - مندمج داخل شريط الهيدر بدون خلفية زرار */
+        .timer-btn {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            font-family: monospace; /* لمنع اهتزاز الأرقام */
+            font-size: 2rem !important;
+            letter-spacing: 1px;
+            color: #ecf0f1; /* جاهز للبدء - أبيض مندمج مع الشريط */
+            font-weight: 900;
+            min-width: auto;
+            height: auto !important;
+            padding: 0 8px !important;
+            transition: color 0.3s;
+        }
+        .timer-btn.paused {
+            opacity: 0.55; /* مؤشر بصري إنه متوقف مؤقتاً، بدون تغيير لون الإشارة */
+        }
+        .timer-btn.timer-warn-yellow {
+            color: #f1c40f !important; /* اصفر: باقي ١٠ دقايق */
+        }
+        .timer-btn.timer-warn-pulse {
+            color: #f1c40f !important; /* نبض اصفر/احمر: باقي ٥ دقايق */
+            animation: pulse-timer-warn 0.9s infinite;
+        }
+        .timer-btn.timer-warn-red {
+            color: #e74c3c !important; /* احمر: تم الوصول للوقت المحدد */
+        }
+        @keyframes pulse-timer-warn {
+            0% { color: #f1c40f; }
+            50% { color: #e74c3c; }
+            100% { color: #f1c40f; }
         }
 
         /* --- Container --- */
         .container {
-            display: -webkit-flex; display: flex; height: calc(100vh - 60px); overflow: hidden;
+            display: -webkit-flex; display: flex; height: calc(100vh - 84px); overflow: hidden;
             -webkit-flex-direction: row-reverse; flex-direction: row-reverse;
         }
 
@@ -83,14 +131,13 @@
         .col-alpha { width: 60px; min-width: 40px; background: #d6dbdf; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; border-right: 1px solid #ccc; }
         .col-titles { width: 200px; min-width: 100px; background: #fff; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; position: relative;}
         
-        /* شريط التعديل الجديد في عمود العناوين للتحضيرات */
         #prepItemToolbar {
-            display: none; /* يظهر فقط في التحضيرات */
+            display: none; 
             -webkit-flex-direction: row-reverse; flex-direction: row-reverse; 
-            gap: 2px; padding: 4px; background: #bdc3c7; border-bottom: 2px solid #95a5a6;
+            gap: 4px; padding: 6px; background: #bdc3c7; border-bottom: 2px solid #95a5a6;
         }
         .prep-item-btn {
-            -webkit-flex: 1; flex: 1; padding: 5px 2px; font-family: 'Cairo', sans-serif; font-size: 0.8rem; font-weight: bold;
+            -webkit-flex: 1; flex: 1; padding: 6px 2px; font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: bold;
             background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; text-align: center;
         }
         .prep-item-btn:hover { background-color: #2c3e50; }
@@ -141,25 +188,12 @@
         .song-display-title { font-weight: 900; color: #2c3e50; display: inline; transition: font-size 0.05s linear; unicode-bidi: embed; }
         .song-display-key { font-weight: bold; color: #c0392b; display: inline; font-family: sans-serif; margin-right: 8px; transition: font-size 0.05s linear; white-space: nowrap; }
 
-        /* الفواصل ومقابض السحب */
         .resizer { 
             width: 8px; background-color: #bdc3c7; cursor: col-resize; -webkit-flex-shrink: 0; flex-shrink: 0; 
             border-left: 1px solid #95a5a6; border-right: 1px solid #95a5a6; z-index: 10; touch-action: none; 
             position: relative; 
         }
         
-        .resizer-grip {
-            position: absolute; 
-            top: 5px; 
-            left: 50%; transform: translateX(-50%);
-            width: 22px; height: 36px; background-color: #2c3e50; border: 2px solid #fff;
-            border-radius: 11px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); cursor: col-resize; z-index: 100; touch-action: none;
-        }
-        .resizer-grip::after {
-            content: "⋮"; color: white; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; height: 100%; margin-top: -2px;
-        }
-        .resizer-grip:hover, .resizer:hover .resizer-grip { background-color: #e74c3c; }
-
         .resizer-horizontal {
             height: 12px; background-color: #bdc3c7; cursor: row-resize; -webkit-flex-shrink: 0; flex-shrink: 0;
             border-top: 1px solid #95a5a6; border-bottom: 1px solid #95a5a6; z-index: 20; touch-action: none; width: 100%;
@@ -277,20 +311,32 @@
         .load-more-btn { display: block; width: 100%; padding: 15px; background: #e67e22; color: white; font-weight: bold; border: none; cursor: pointer; text-align: center; font-family: 'Cairo', sans-serif; border-bottom: 1px solid #ddd; }
         .limit-msg { padding: 10px; text-align: center; color: #e67e22; font-weight: bold; font-size: 0.9rem; background: #fff8e1; border-top: 1px dashed #e67e22; }
 
+        @media (max-width: 767px) {
+            /* تصغير أزرار الأدوات الصغيرة (A+ / A- / تمرير) فقط، بدون العداد أو زراير الفُل سكرين والسيتينج الكبيرة */
+            .header-btn:not(.header-btn-lg):not(.timer-btn) { font-size: 0.75rem; padding: 5px; }
+            .header-btn-lg { font-size: 1.2rem !important; height: 60px !important; padding: 8px 14px !important; }
+            .timer-btn { font-size: 1.5rem !important; }
+            header { height: 76px !important; }
+            .container { height: calc(100vh - 76px) !important; }
+            header h1 { display: none; /* إخفاء اسم البرنامج في الموبايل لتوفير مساحة للأزرار المهمة */ }
+            .search-wrapper { max-width: 150px; }
+        }
+
         @media (min-width: 768px) {
             .lyrics-scroll-area { font-size: 2.5rem; line-height: 1.4; padding: 20px 10px; }
             header h1 { font-size: 1.5rem; }
             #mainSearchInput { font-size: 1.2rem; }
             .col-header { font-size: 1.2rem; height: 55px; padding: 12px; }
-            .resizer-grip { top: 10px; }
             .song-display-header { min-height: 70px; }
             .song-display-title { font-size: 1.8rem; }
             .song-display-key { font-size: 1.4rem; }
+            .timer-btn { font-size: 2.3rem !important; min-width: auto; }
         }
 
         /* Panel & Modal */
         .panel-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f7f6; z-index: 200; -webkit-flex-direction: column; flex-direction: column; }
-        .panel-header { background: #2c3e50; color: white; padding: 15px; display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: center; align-items: center; }
+        .panel-header { background: #2c3e50; color: white; padding: 15px; display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: center; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .panel-header > div { display: -webkit-flex; display: flex; align-items: center; gap: 12px; }
         .panel-content { padding: 20px; flex: 1; -webkit-flex: 1; overflow-y: auto; width: 100%; -webkit-overflow-scrolling: touch; }
         
         .btn-big { padding: 10px 20px; border: none; border-radius: 5px; color: white; font-family: 'Cairo', sans-serif; cursor: pointer; font-weight: bold; text-align: center; margin-bottom: 15px; width: 100%; display: block; }
@@ -418,8 +464,10 @@
         </div>
     </div>
     <div class="header-left">
-        <button class="header-btn" onclick="tryFullScreen()">FullScreen</button>
-        <button class="header-btn" onclick="openControlPanel()">Settings</button>
+        <!-- العداد الذكي المضاف حديثاً (ستوب واتش الخدمة) -->
+        <button id="serviceTimerBtn" class="header-btn timer-btn" onclick="toggleTimer()" title="ضغطة للتشغيل/الإيقاف، ضغطة مطولة لتحديد وقت جديد">00:00</button>
+        <button class="header-btn header-btn-lg" onclick="tryFullScreen()">FullScreen</button>
+        <button class="header-btn header-btn-lg" onclick="openControlPanel()">Settings</button>
     </div>
 </header>
 
@@ -428,16 +476,12 @@
         <div class="col-header">السلم</div>
         <div class="scroll-list" id="keys-list"></div>
     </div>
-    <div class="resizer" id="resizer1">
-        <div class="resizer-grip"></div>
-    </div>
+    <div class="resizer" id="resizer1"></div>
     <div class="col-alpha" id="colAlpha">
         <div class="col-header">الحرف</div>
         <div class="scroll-list" id="alpha-list"></div>
     </div>
-    <div class="resizer" id="resizer2">
-        <div class="resizer-grip"></div>
-    </div>
+    <div class="resizer" id="resizer2"></div>
     <div class="col-titles" id="colTitles">
         <div class="col-header">العناوين</div>
         <!-- شريط أدوات تعديل بند التحضير المدمج داخل العمود -->
@@ -448,29 +492,33 @@
         </div>
         <div class="scroll-list" id="titles-list"></div>
     </div>
-    <div class="resizer" id="resizer3">
-        <div class="resizer-grip"></div>
-    </div>
+    <div class="resizer" id="resizer3"></div>
     
     <div class="col-lyrics" id="colLyrics">
+        <!-- الرأس الثابت للترنيمة -->
         <div id="songDisplayHeader" class="song-display-header" style="display:none;">
             <div class="header-text-container">
+                <!-- إضافة bdi لحل مشكلة الحروف المتشقلبة -->
                 <span id="displayTitle" class="song-display-title"><bdi></bdi></span>
                 <span id="displayKey" class="song-display-key"></span>
                 <span id="displayKeyHelp" class="hint-lamp" style="cursor:pointer; font-size:1.3rem; margin-right:5px; display:none; user-select:none; -webkit-user-select:none; vertical-align: middle;" onclick="showChordsHelp()" title="دليل الكوردات المساعد">💡</span>
             </div>
         </div>
         
+        <!-- فاصل أفقي للسحب -->
         <div class="resizer-horizontal" id="resizerV">
+            <!-- مقبض أفقي جذاب للفصل الأفقي لعرض الكلمات -->
             <div class="resizer-horizontal-grip"></div>
 
+            <!-- شريط الأدوات الملتصق بالفاصل الأفقي والمنسق بمسافات أمان واسعة -->
             <div id="lyricsToolbar" style="display:none;">
-                <button class="header-btn" onclick="adjustFontSize(1)" style="margin:0; border-radius:50%; width:32px; height:32px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);" title="تكبير الخط">A+</button>
-                <button class="header-btn" onclick="adjustFontSize(-1)" style="margin:0; border-radius:50%; width:32px; height:32px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);" title="تصغير الخط">A-</button>
-                <button class="header-btn" id="btnAutoScroll" onclick="toggleAutoScroll()" style="margin:0; border-radius:50%; width:32px; height:32px; font-weight:bold; background-color:#2980b9; border-color:#2980b9; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition: background-color 0.2s;" title="تمرير تلقائي للكلمات">▼</button>
+                <button class="header-btn" onclick="adjustFontSize(1)" title="تكبير الخط">A+</button>
+                <button class="header-btn" onclick="adjustFontSize(-1)" title="تصغير الخط">A-</button>
+                <button class="header-btn" id="btnAutoScroll" onclick="toggleAutoScroll()" style="background-color:#2980b9; border-color:#2980b9; transition: background-color 0.2s;" title="تمرير تلقائي للكلمات">▼</button>
             </div>
         </div>
 
+        <!-- الكلمات القابلة للسكرول -->
         <div id="lyrics-view" class="lyrics-scroll-area">
             <div style="color:#999; margin-top:50px; font-size:1rem; font-weight:normal">اختر السلم > الحرف > الترنيمة</div>
         </div>
@@ -482,8 +530,8 @@
     <div class="panel-header">
         <h3>Control Panel</h3>
         <div>
-            <button class="header-btn" onclick="toggleDarkMode()">Night Mood</button>
-            <button class="header-btn" onclick="closeControlPanel()">Back</button>
+            <button class="header-btn header-btn-lg" onclick="toggleDarkMode()">Night Mood</button>
+            <button class="header-btn header-btn-lg" onclick="closeControlPanel()">Back</button>
         </div>
     </div>
     <div class="panel-content">
@@ -516,6 +564,7 @@
     </div>
 </div>
 
+<!-- Modal (Admin Edit/Add) -->
 <div class="modal" id="editModal">
     <div class="modal-content">
         <h3 id="modalTitle" style="margin:0 0 10px 0">ترنيمة جديدة</h3>
@@ -533,6 +582,7 @@
     </div>
 </div>
 
+<!-- نافذة إنشاء/تعديل اسم التحضير (الخدمة) -->
 <div class="modal" id="prepNameModal">
     <div class="modal-content">
         <h3 id="prepNameModalTitle" style="margin:0 0 10px 0">تحضير جديد</h3>
@@ -546,6 +596,20 @@
     </div>
 </div>
 
+<!-- نافذة تحديد الوقت المستهدف للعداد الذكي -->
+<div class="modal" id="timerSetModal">
+    <div class="modal-content" style="max-width: 320px;">
+        <h3 style="margin:0 0 10px 0">تحديد وقت الفقرة</h3>
+        <label>عدد الدقايق المخصصة:</label>
+        <input type="number" id="timerTargetInput" min="1" max="600" placeholder="مثال: 20" inputmode="numeric">
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeTimerSetModal()">إلغاء</button>
+            <button class="btn-save" onclick="saveTimerTarget()">حفظ</button>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة البحث وإضافة ترنيمة للتحضير الحالي -->
 <div class="modal" id="prepAddSongModal">
     <div class="modal-content" style="max-height: 85vh;">
         <h3 style="margin:0 0 10px 0">إضافة ترنيمة للتحضير</h3>
@@ -557,6 +621,7 @@
     </div>
 </div>
 
+<!-- نافذة إضافة وتعديل تعليق/تأمل مستقل للخدمة -->
 <div class="modal" id="prepCommentModal">
     <div class="modal-content">
         <h3 id="prepCommentModalTitle" style="margin:0 0 10px 0">تعليق / تأمل جديد للخدمة</h3>
@@ -572,6 +637,7 @@
     </div>
 </div>
 
+<!-- نافذة عرض الكوردات الأساسية للسلم -->
 <div class="modal" id="chordsModal" style="z-index: 400;">
     <div class="modal-content" style="max-width: 330px; text-align: center;">
         <h3 style="margin:0 0 15px 0; color:#8e44ad;">💡 دليل كوردات السلم</h3>
@@ -583,6 +649,7 @@
     </div>
 </div>
 
+<!-- نافذة تعديل كلمات الترنيمة المخصصة للتحضير الحالي -->
 <div class="modal" id="prepLyricsModal">
     <div class="modal-content" style="max-height: 90vh;">
         <h3 id="prepLyricsModalTitle" style="margin:0 0 10px 0; color:#e67e22;">📝 تعديل كلمات الترنيمة للخدمة</h3>
@@ -599,7 +666,7 @@
 <!-- نافذة صغيرة لتعديل العنوان فقط للمرونة -->
 <div class="modal" id="prepTitleEditModal" style="z-index: 400;">
     <div class="modal-content" style="max-width: 330px;">
-        <h3 style="margin:0 0 10px 0; color:#2980b9;">تعديل العنوان المخصص</h3>
+        <h3 style="margin:0 0 10px 0; color:#2980b9;">تعديل العنوان</h3>
         <input type="hidden" id="prepTitleEditIndex">
         <input type="text" id="prepTitleEditText" placeholder="اكتب العنوان المخصص هنا...">
         <div class="modal-buttons" style="margin-top: 10px;">
@@ -684,9 +751,7 @@
     var activePrepId = null;
     var tempPrepSongQuery = "";
     
-    // متغير لتتبع العنصر النشط حالياً في التحضيرات
     var currentActivePrepItemIndex = null;
-
     var activeDragItem = null;
     var startY = 0;
     var startIndex = -1;
@@ -698,18 +763,27 @@
     var currentActiveKeyForHelp = "";
     var currentMatchedRecsPool = []; 
     var recsOffset = 0; 
-
     var currentActiveLyricsId = null;
     var customFontSizes = JSON.parse(localStorage.getItem('myCustomFontSizes')) || {};
+
+    // --- متغيرات الستوب واتش ---
+    var timerInterval = null;
+    var timerSeconds = 0;
+    var isTimerRunning = false;
+    var timerPressTimer;
+    var timerDidReset = false;
+    var timerTargetSeconds = null; // الوقت المستهدف بالثواني (null = بدون هدف، عداد عادي)
+    (function loadSavedTimerTarget() {
+        var savedMins = parseInt(localStorage.getItem('timerTargetMinutes'), 10);
+        if (!isNaN(savedMins) && savedMins > 0) { timerTargetSeconds = savedMins * 60; }
+    })();
 
     var currentKey = "C";
     var currentLetter = "";
     var searchTimeout;
-    
     var currentFilteredList = [];
     var currentRenderIndex = 0;
     var BATCH_SIZE = 100;
-
     var panelFilteredList = [];
     var panelRenderIndex = 0;
 
@@ -727,11 +801,9 @@
     var panelSearchInput = document.getElementById('panelSearchInput');
     var panelFilterLetter = document.getElementById('panelFilterLetter');
     var panelFilterKey = document.getElementById('panelFilterKey');
-    
     var mainHistoryList = document.getElementById('mainHistoryList');
     var panelHistoryList = document.getElementById('panelHistoryList');
     var prepItemToolbar = document.getElementById('prepItemToolbar');
-
     var songDisplayHeader = document.getElementById('songDisplayHeader');
     var displayTitle = document.getElementById('displayTitle');
     var displayKey = document.getElementById('displayKey');
@@ -746,6 +818,135 @@
     setupResizer(resizer2, document.getElementById('colAlpha'));
     setupResizer(resizer3, document.getElementById('colTitles'));
     setupVerticalResizer(resizerV, songDisplayHeader);
+
+    // --- دوال الستوب واتش الذكي ---
+    function toggleTimer() {
+        if (timerDidReset) return; // تجاهل الضغطة إذا كانت نتيجة لضغطة مطولة للتصفير
+        
+        var btn = document.getElementById('serviceTimerBtn');
+        if (isTimerRunning) {
+            // إيقاف مؤقت (Pause)
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            btn.classList.remove('running');
+            btn.classList.add('paused');
+        } else {
+            // تشغيل (Start)
+            isTimerRunning = true;
+            btn.classList.remove('paused');
+            btn.classList.add('running');
+            
+            timerInterval = setInterval(function() {
+                timerSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+    }
+
+    function updateTimerDisplay() {
+        var btn = document.getElementById('serviceTimerBtn');
+        var hrs = Math.floor(timerSeconds / 3600);
+        var mins = Math.floor((timerSeconds % 3600) / 60);
+        var secs = timerSeconds % 60;
+        
+        var display = (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
+        btn.textContent = display;
+
+        // إشارات بصرية بناءً على قرب الوصول للوقت المستهدف
+        btn.classList.remove('timer-warn-yellow', 'timer-warn-pulse', 'timer-warn-red');
+        if (timerTargetSeconds) {
+            if (timerSeconds >= timerTargetSeconds) {
+                btn.classList.add('timer-warn-red');
+            } else if (timerSeconds >= timerTargetSeconds - 300) {
+                btn.classList.add('timer-warn-pulse');
+            } else if (timerSeconds >= timerTargetSeconds - 600) {
+                btn.classList.add('timer-warn-yellow');
+            }
+        }
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        timerSeconds = 0;
+        var btn = document.getElementById('serviceTimerBtn');
+        btn.classList.remove('running');
+        btn.classList.remove('paused');
+        updateTimerDisplay();
+        openTimerSetModal();
+    }
+
+    function openTimerSetModal() {
+        var input = document.getElementById('timerTargetInput');
+        input.value = timerTargetSeconds ? Math.round(timerTargetSeconds / 60) : '';
+        document.getElementById('timerSetModal').style.display = 'flex';
+        setTimeout(function() { input.focus(); }, 200);
+    }
+
+    function closeTimerSetModal() {
+        document.getElementById('timerSetModal').style.display = 'none';
+    }
+
+    function saveTimerTarget() {
+        var input = document.getElementById('timerTargetInput');
+        var mins = parseInt(input.value, 10);
+        if (isNaN(mins) || mins <= 0) {
+            alert('من فضلك اكتب عدد دقايق صحيح أكبر من صفر.');
+            return;
+        }
+        timerTargetSeconds = mins * 60;
+        localStorage.setItem('timerTargetMinutes', mins);
+        closeTimerSetModal();
+
+        // حفظ الوقت المستهدف فقط، بدون تشغيل العداد تلقائياً
+        clearInterval(timerInterval);
+        timerSeconds = 0;
+        isTimerRunning = false;
+        var btn = document.getElementById('serviceTimerBtn');
+        btn.classList.remove('running', 'paused', 'timer-warn-yellow', 'timer-warn-pulse', 'timer-warn-red');
+        updateTimerDisplay();
+    }
+
+    function bindTimerLongPress() {
+        var btn = document.getElementById('serviceTimerBtn');
+        if(!btn) return;
+        
+        btn.addEventListener('touchstart', function(e) {
+            timerDidReset = false;
+            timerPressTimer = setTimeout(function() {
+                timerDidReset = true;
+                if (navigator.vibrate) navigator.vibrate(40);
+                resetTimer();
+            }, 1000); 
+        }, {passive: true});
+        
+        btn.addEventListener('touchend', function(e) {
+            clearTimeout(timerPressTimer);
+            if (timerDidReset) {
+                e.preventDefault(); 
+            }
+        });
+        
+        btn.addEventListener('touchmove', function(e) {
+            clearTimeout(timerPressTimer);
+        }, {passive: true});
+        
+        // دعم الماوس للأجهزة العادية
+        btn.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            timerDidReset = false;
+            timerPressTimer = setTimeout(function() {
+                timerDidReset = true;
+                resetTimer();
+            }, 1000);
+        });
+        btn.addEventListener('mouseup', function(e) {
+            clearTimeout(timerPressTimer);
+        });
+        btn.addEventListener('mouseleave', function(e) {
+            clearTimeout(timerPressTimer);
+        });
+    }
 
     mainSearchInput.onkeyup = function(e) {
         if(e.key === 'Enter') {
@@ -1077,6 +1278,7 @@
         
         if(localStorage.getItem('nightMode') === 'on') { document.body.classList.add('dark-mode'); }
         
+        bindTimerLongPress(); // تفعيل ضغطة الستوب واتش
         loadSongsFromJSON(false);
         refreshUI();
         updateHeaderStyles(90);
@@ -1421,7 +1623,6 @@
         }
     }
 
-    // دالة عرض الكلمات بالخط الكبير الافتراضي وبدون Auto-fit
     function showLyricsWithTransition(lyricsText, titleText, keyText, songObj, itemId) {
         stopAutoScroll(); 
         var cleanLyrics = lyricsText.replace(/\n\s*\n\s*\n/g, '\n\n');
@@ -1448,7 +1649,6 @@
             var activeId = itemId ? itemId : (songObj ? songObj.id : null);
             currentActiveLyricsId = activeId;
             
-            // استخدام الخط المحفوظ، أو العودة لخط كبير وواضح افتراضياً
             var savedSize = loadCustomFontSize(activeId);
             if (savedSize) {
                 currentFontSize = parseFloat(savedSize);
@@ -1726,8 +1926,8 @@
                 item = { id: item };
             }
             item.customTitle = newTitle;
-            data.prep.songIds[idx] = item;
         }
+        data.prep.songIds[idx] = item;
         
         savePreparations();
         document.getElementById('prepTitleEditModal').style.display = 'none';
@@ -1759,7 +1959,7 @@
                 item = { id: item };
             }
             if (cleanedKey === "" || cleanedKey === (s.key || "No Scale")) {
-                item.customKey = null; // الرجوع للأصلي
+                item.customKey = null; 
             } else {
                 item.customKey = cleanedKey;
             }
@@ -1879,7 +2079,9 @@
             return;
         }
 
-        for (var i = 0; i < preparations.length; i++) {
+        var sortedPreps = preparations; 
+
+        for (var i = 0; i < sortedPreps.length; i++) {
             (function(prep, index) {
                 var div = document.createElement('div');
                 div.className = 'song-item';
@@ -1897,7 +2099,6 @@
                 countBadge.style.marginRight = '8px';
                 countBadge.innerText = prep.songIds.length;
 
-                // تفعيل السحب بالضغط المطول (بدون مقابض)
                 bindDragEvents(div, index, null);
 
                 div.appendChild(titleSpan);
@@ -1907,7 +2108,7 @@
                     renderPreparationDetail(prep.id);
                 };
                 titlesList.appendChild(div);
-            })(preparations[i], i);
+            })(sortedPreps[i], i);
         }
     }
 
@@ -2042,23 +2243,19 @@
                     titleSpan.style.textAlign = 'right';
                     titleSpan.innerHTML = '📝 <bdi>' + commentItem.title + '</bdi>';
 
-                    var removeBtn = document.createElement('span');
-                    removeBtn.style.color = '#e74c3c';
-                    removeBtn.style.cursor = 'pointer';
-                    removeBtn.style.padding = '5px 10px';
-                    removeBtn.style.fontWeight = 'bold';
-                    removeBtn.innerText = '✕';
-                    removeBtn.title = 'حذف التعليق';
-                    removeBtn.onclick = function(e) {
-                        e.stopPropagation();
-                        removeSongFromPrep(pId, index, true);
-                    };
-
-                    // ربط أحداث السحب بالضغط المطول بدون مقابض ظاهرة
                     bindDragEvents(div, index, pId);
 
                     div.appendChild(titleSpan);
-                    div.appendChild(removeBtn);
+
+                    var delXBtn = document.createElement('span');
+                    delXBtn.className = 'prep-song-delete';
+                    delXBtn.innerText = '✕';
+                    delXBtn.title = 'حذف التعليق من التحضير';
+                    delXBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        deleteSongFromPrep(pId, index);
+                    };
+                    div.appendChild(delXBtn);
 
                     div.onclick = function() {
                         var items = document.querySelectorAll('.song-item');
@@ -2110,29 +2307,25 @@
                     var keyWeight = cKey ? 'bold' : 'normal';
                     
                     var displayTitle = cTitle ? cTitle : s.title;
-                    var titleColor = cTitle ? '#2980b9' : '#000';
+                    var titleStyleAttr = cTitle ? ' style="color:#2980b9;"' : '';
 
-                    var lyricsBadge = cLyrics ? ' <span style="font-size:0.6em; color:white; background:#e67e22; padding:2px 4px; border-radius:4px;">معدلة</span>' : '';
+                    var lyricsBadge = cLyrics ? ' <span style="font-size:0.6em; color:white; background:#e67e22; padding:2px 4px; border-radius:4px; margin-right:4px;">معدلة</span>' : '';
 
-                    titleSpan.innerHTML = '<bdi style="color:'+titleColor+';">' + displayTitle + '</bdi>' + lyricsBadge + ' <span style="font-size:0.75em; color:' + keyColor + '; font-weight:' + keyWeight + ';">(' + keyToDisplay + ')</span>';
+                    titleSpan.innerHTML = '<bdi' + titleStyleAttr + '>' + displayTitle + '</bdi>' + lyricsBadge + ' <span style="font-size:0.75em; color:' + keyColor + '; font-weight:' + keyWeight + ';">(' + keyToDisplay + ')</span>';
 
-                    var removeBtn = document.createElement('span');
-                    removeBtn.style.color = '#e74c3c';
-                    removeBtn.style.cursor = 'pointer';
-                    removeBtn.style.padding = '5px 10px';
-                    removeBtn.style.fontWeight = 'bold';
-                    removeBtn.innerText = '✕';
-                    removeBtn.title = 'حذف من التحضير';
-                    removeBtn.onclick = function(e) {
-                        e.stopPropagation();
-                        removeSongFromPrep(pId, index, false);
-                    };
-
-                    // ربط أحداث السحب بالضغط المطول بدون مقابض ظاهرة
                     bindDragEvents(div, index, pId);
 
                     div.appendChild(titleSpan);
-                    div.appendChild(removeBtn);
+
+                    var delXBtn = document.createElement('span');
+                    delXBtn.className = 'prep-song-delete';
+                    delXBtn.innerText = '✕';
+                    delXBtn.title = 'حذف الترنيمة من التحضير';
+                    delXBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        deleteSongFromPrep(pId, index);
+                    };
+                    div.appendChild(delXBtn);
 
                     div.onclick = function() {
                         var items = document.querySelectorAll('.song-item');
@@ -2149,14 +2342,31 @@
             }
         }
 
-        // استعادة التحديد إذا تم إعادة الرسم
         if (currentActivePrepItemIndex !== null) {
             var activeEl = document.getElementById('prepItem-' + currentActivePrepItemIndex);
             if (activeEl) activeEl.classList.add('active');
         }
     }
 
-    // --- نظام إعادة الترتيب للترانيم والتعليقات والتحضيرات عبر الضغط المطول لمنع السكرول الخاطئ ---
+    function deleteSongFromPrep(prepId, index) {
+        var prep = null;
+        for (var x = 0; x < preparations.length; x++) {
+            if (Number(preparations[x].id) === Number(prepId)) { prep = preparations[x]; break; }
+        }
+        if (!prep || !prep.songIds || index < 0 || index >= prep.songIds.length) return;
+
+        if (!confirm('هل تريد حذف هذا العنصر من التحضير؟')) return;
+
+        prep.songIds.splice(index, 1);
+        if (currentActivePrepItemIndex === index) {
+            currentActivePrepItemIndex = null;
+        } else if (currentActivePrepItemIndex !== null && currentActivePrepItemIndex > index) {
+            currentActivePrepItemIndex--;
+        }
+        savePreparations();
+        renderPreparationDetail(prepId);
+    }
+
     function bindDragEvents(rowEl, index, prepId) {
         var pressTimer = null;
         var dragReady = false;
@@ -2181,7 +2391,7 @@
                 rowEl.style.backgroundColor = bgColor;
                 
                 startDrag(clientY, idx);
-            }, 1000); // ثانية واحدة من الضغط المتواصل تفعيل السحب
+            }, 1000); 
         }
 
         function movePress(clientY) {
@@ -2258,7 +2468,7 @@
             activeDragItem.style.transform = '';
             activeDragItem.style.webkitTransform = '';
             activeDragItem = null;
-            currentActivePrepItemIndex = null; // إعادة تعيين التحديد بعد الترتيب
+            currentActivePrepItemIndex = null; 
             
             savePreparations();
             if (prepId) {
@@ -2271,7 +2481,6 @@
 
         function swapItems(fromIndex, toIndex) {
             if (prepId) {
-                // تبديل بداخل التحضير
                 var prep = null;
                 for (var x = 0; x < preparations.length; x++) {
                     if (Number(preparations[x].id) === Number(prepId)) { prep = preparations[x]; break; }
@@ -2282,7 +2491,6 @@
                     prep.songIds[toIndex] = temp;
                 }
             } else {
-                // تبديل التحضيرات نفسها
                 var temp = preparations[fromIndex];
                 preparations[fromIndex] = preparations[toIndex];
                 preparations[toIndex] = temp;
@@ -2327,7 +2535,7 @@
         });
         rowEl.addEventListener('touchmove', function(e) {
             if (dragReady) {
-                e.preventDefault();
+                e.preventDefault(); 
             }
             movePress(e.touches[0].clientY);
         });
@@ -2335,7 +2543,7 @@
         rowEl.addEventListener('touchcancel', endPress);
 
         rowEl.addEventListener('mousedown', function(e) {
-            if (e.button !== 0) return;
+            if (e.button !== 0) return; 
             startY = e.clientY;
             startPress(e.clientY, index);
             
@@ -2352,23 +2560,6 @@
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
         });
-    }
-
-    function removeSongFromPrep(prepId, targetIndex, isComment) {
-        var msg = isComment ? "هل تريد حذف هذا التعليق بالكامل من التحضير؟" : "هل تريد إزالة هذه الترنيمة من التحضير؟";
-        if (confirm(msg)) {
-            var prep = null;
-            for (var x = 0; x < preparations.length; x++) {
-                if (Number(preparations[x].id) === Number(prepId)) { prep = preparations[x]; break; }
-            }
-            if (prep) {
-                prep.songIds.splice(targetIndex, 1);
-                currentActivePrepItemIndex = null;
-                savePreparations();
-                renderPreparationDetail(prepId);
-                renderKeys();
-            }
-        }
     }
 
     function openPrepAddSongModal() {
@@ -2625,7 +2816,81 @@
         }
     }
 
-    // دالة مشاركة الخدمة المنسقة عبر الواتساب مع دعم النسخ الاحتياطي التوافقي للأجهزة القديمة
+    function openPrepCommentModal(prepId, commentIndex) {
+        document.getElementById('prepCommentModal').style.display = 'flex';
+        var titleField = document.getElementById('prepCommentTitle');
+        var textField = document.getElementById('prepCommentText');
+        var indexField = document.getElementById('prepCommentIndex');
+        var modalTitle = document.getElementById('prepCommentModalTitle');
+        
+        if (commentIndex !== undefined && commentIndex !== null) {
+            var prep = null;
+            for (var x = 0; x < preparations.length; x++) {
+                if (Number(preparations[x].id) === Number(prepId)) { prep = preparations[x]; break; }
+            }
+            if (prep) {
+                var item = prep.songIds[commentIndex];
+                indexField.value = commentIndex;
+                titleField.value = item.title || "";
+                textField.value = item.text || "";
+                modalTitle.innerText = "تعديل التعليق / التأمل";
+            }
+        } else {
+            indexField.value = "";
+            titleField.value = "";
+            textField.value = "";
+            modalTitle.innerText = "إضافة تعليق / تأمل جديد للخدمة";
+        }
+        titleField.focus();
+    }
+
+    function closePrepCommentModal() {
+        document.getElementById('prepCommentModal').style.display = 'none';
+    }
+
+    function savePrepComment() {
+        var index = document.getElementById('prepCommentIndex').value;
+        var title = document.getElementById('prepCommentTitle').value.trim();
+        var text = document.getElementById('prepCommentText').value;
+        
+        if (!title || !text.trim()) { alert("من فضلك أدخل العنوان والنص للتعليق"); return; }
+        
+        var activePrep = null;
+        for (var x = 0; x < preparations.length; x++) {
+            if (Number(preparations[x].id) === Number(activePrepId)) { activePrep = preparations[x]; break; }
+        }
+        
+        if (activePrep) {
+            if (!activePrep.songIds) {
+                activePrep.songIds = [];
+            }
+            if (index !== "") {
+                var idx = parseInt(index, 10);
+                activePrep.songIds[idx] = {
+                    isComment: true,
+                    id: activePrep.songIds[idx].id || new Date().getTime(),
+                    title: title,
+                    text: text
+                };
+            } else {
+                if (activePrep.songIds.length >= 99) {
+                    alert("الحد الأقصى للتحضير الواحد هو 99 بند.");
+                    return;
+                }
+                activePrep.songIds.push({
+                    isComment: true,
+                    id: new Date().getTime(),
+                    title: title,
+                    text: text
+                });
+            }
+            savePreparations();
+            closePrepCommentModal();
+            renderPreparationDetail(activePrepId);
+            renderKeys();
+        }
+    }
+
     function sharePrepAsText(prepId) {
         var prep = null;
         for (var x = 0; x < preparations.length; x++) {
@@ -2669,7 +2934,6 @@
     }
 
     function copyToClipboard(text) {
-        // فحص دعم محرك التصفح لـ Clipboard API الحديثة
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(function() {
                 alert("📋 تم نسخ تفاصيل الخدمة بنجاح! يمكنك الآن لصقها في واتساب.");
@@ -2681,7 +2945,6 @@
         }
     }
 
-    // دالة النسخ التوافقية لتابلت سامسونج القديم ومتصفحات الويب القديمة
     function fallbackCopyToClipboard(text) {
         var textArea = document.createElement("textarea");
         textArea.value = text;
@@ -2708,8 +2971,6 @@
 
         document.body.removeChild(textArea);
     }
-
-    // ==========================================
 
     function openControlPanel() {
         controlPanel.style.display = 'flex';
@@ -2878,6 +3139,12 @@
         renderKeys();
     }
 
+    function renderManageList(songsData) {
+         if (controlPanel.style.display === 'flex' || controlPanel.style.display === '-webkit-flex') {
+              openControlPanel();
+         }
+    }
+
     function deleteSong(id) {
         if(confirm("هل أنت متأكد من الحذف؟")) {
             var newSongs = [];
@@ -2887,7 +3154,6 @@
             songs = newSongs;
             localStorage.setItem('mySongs', JSON.stringify(songs));
             
-            // تنظيف الترانيم المحذوفة من التحضيرات أيضاً لضمان سلامة الأرشيف
             for (var k = 0; k < preparations.length; k++) {
                 var tempIds = [];
                 for (var x = 0; x < preparations[k].songIds.length; x++) {
@@ -2908,7 +3174,6 @@
         }
     }
 
-    // --- تصدير البيانات الشامل (ترانيم + تحضيرات + خطوط مفضلة) ---
     function exportData() {
         try {
             var backupData = {
