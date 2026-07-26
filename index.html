@@ -6,6 +6,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#2c3e50">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <title>Scales (Admin)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -543,6 +546,8 @@
         
         <button class="btn-big btn-add" onclick="openEditModal(null)">+ إضافة ترنيمة جديدة</button>
         <button class="btn-big btn-reload" onclick="loadSongsFromJSON(true)">🔄 تحديث من السيرفر (songs.json)</button>
+        <button class="btn-big" id="installAppBtn" style="background:#16a085; display:none;" onclick="installApp()">⬇️ تثبيت التطبيق على الجهاز</button>
+        <p id="installAppInstalledMsg" style="display:none; text-align:center; color:#16a085; font-weight:bold;">✅ التطبيق متثبت على الجهاز</p>
         
         <br><br>
         <div class="filter-row">
@@ -3261,6 +3266,53 @@
     }
 
     init();
+
+    // --- تسجيل الـ Service Worker لتشغيل التطبيق أوفلاين ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('service-worker.js').catch(function (err) {
+                console.log('Service worker registration failed:', err);
+            });
+        });
+    }
+
+    // --- زرار تثبيت التطبيق (PWA) ---
+    var deferredInstallPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        var btn = document.getElementById('installAppBtn');
+        if (btn) btn.style.display = 'block';
+    });
+
+    function installApp() {
+        var btn = document.getElementById('installAppBtn');
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then(function () {
+            deferredInstallPrompt = null;
+            if (btn) btn.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('appinstalled', function () {
+        var btn = document.getElementById('installAppBtn');
+        var msg = document.getElementById('installAppInstalledMsg');
+        if (btn) btn.style.display = 'none';
+        if (msg) msg.style.display = 'block';
+        deferredInstallPrompt = null;
+    });
+
+    // لو التطبيق شغال فعلاً كتطبيق مثبت (standalone)، اعرض رسالة "متثبت" بدل زرار التثبيت
+    (function checkIfAlreadyInstalled() {
+        var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        if (isStandalone) {
+            var msg = document.getElementById('installAppInstalledMsg');
+            if (msg) msg.style.display = 'block';
+        }
+    })();
+
 </script>
 </body>
 </html>
