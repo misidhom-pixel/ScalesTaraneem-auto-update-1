@@ -82,7 +82,6 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* أزرار كبيرة (فُل سكرين / سيتينج في الهيدر، وباك / نايت مود في لوحة التحكم) - ضعف الحجم تقريباً */
         .header-btn-lg {
             padding: 10px 22px !important;
             height: 70px !important;
@@ -90,34 +89,24 @@
             border-radius: 8px !important;
         }
 
-        /* تنسيق العداد الذكي - مندمج داخل شريط الهيدر بدون خلفية زرار */
         .timer-btn {
             background-color: transparent !important;
             border: none !important;
             box-shadow: none !important;
-            font-family: monospace; /* لمنع اهتزاز الأرقام */
+            font-family: monospace;
             font-size: 2rem !important;
             letter-spacing: 1px;
-            color: #ecf0f1; /* جاهز للبدء - أبيض مندمج مع الشريط */
+            color: #ecf0f1;
             font-weight: 900;
             min-width: auto;
             height: auto !important;
             padding: 0 8px !important;
             transition: color 0.3s;
         }
-        .timer-btn.paused {
-            opacity: 0.55; /* مؤشر بصري إنه متوقف مؤقتاً، بدون تغيير لون الإشارة */
-        }
-        .timer-btn.timer-warn-yellow {
-            color: #f1c40f !important; /* اصفر: باقي ١٠ دقايق */
-        }
-        .timer-btn.timer-warn-pulse {
-            color: #f1c40f !important; /* نبض اصفر/احمر: باقي ٥ دقايق */
-            animation: pulse-timer-warn 0.9s infinite;
-        }
-        .timer-btn.timer-warn-red {
-            color: #e74c3c !important; /* احمر: تم الوصول للوقت المحدد */
-        }
+        .timer-btn.paused { opacity: 0.55; }
+        .timer-btn.timer-warn-yellow { color: #f1c40f !important; }
+        .timer-btn.timer-warn-pulse { color: #f1c40f !important; animation: pulse-timer-warn 0.9s infinite; }
+        .timer-btn.timer-warn-red { color: #e74c3c !important; }
         @keyframes pulse-timer-warn {
             0% { color: #f1c40f; }
             50% { color: #e74c3c; }
@@ -145,7 +134,6 @@
         }
         .prep-item-btn:hover { background-color: #2c3e50; }
 
-        /* === عمود الكلمات === */
         .col-lyrics { 
             -webkit-flex: 1; flex: 1; 
             background: #fdf6e3; 
@@ -248,14 +236,8 @@
             opacity: 1;
         }
 
-        .lyrics-scroll-area.fade-out {
-            opacity: 0;
-        }
-
-        #lyricsRecommendationsContainer {
-            transition: opacity 0.15s ease-in-out;
-            opacity: 1;
-        }
+        .lyrics-scroll-area.fade-out { opacity: 0; }
+        #lyricsRecommendationsContainer { transition: opacity 0.15s ease-in-out; opacity: 1; }
 
         .col-header { background: #dcdde1; padding: 10px 2px; text-align: center; font-weight: bold; font-size: 1rem; border-bottom: 2px solid #aaa; -webkit-flex-shrink: 0; flex-shrink: 0; height: 45px; white-space: nowrap; overflow: hidden; }
         .scroll-list { -webkit-flex: 1; flex: 1; overflow-y: auto; border-bottom: 1px solid #ccc; -webkit-overflow-scrolling: touch; }
@@ -312,20 +294,52 @@
         }
 
         .load-more-btn { display: block; width: 100%; padding: 15px; background: #e67e22; color: white; font-weight: bold; border: none; cursor: pointer; text-align: center; font-family: 'Cairo', sans-serif; border-bottom: 1px solid #ddd; }
-        .limit-msg { padding: 10px; text-align: center; color: #e67e22; font-weight: bold; font-size: 0.9rem; background: #fff8e1; border-top: 1px dashed #e67e22; }
 
+        /* ============================================================ */
+        /* 📱 التنسيق الذكي والمريح جداً المخصص للشاشات الصغيرة (الموبايل) */
+        /* ============================================================ */
         @media (max-width: 767px) {
-            /* تصغير أزرار الأدوات الصغيرة (A+ / A- / تمرير) فقط، بدون العداد أو زراير الفُل سكرين والسيتينج الكبيرة */
-            .header-btn:not(.header-btn-lg):not(.timer-btn) { font-size: 0.75rem; padding: 5px; }
-            .header-btn-lg { font-size: 1.2rem !important; height: 60px !important; padding: 8px 14px !important; }
-            .timer-btn { font-size: 1.5rem !important; }
-            header { height: 76px !important; }
-            .container { height: calc(100vh - 76px) !important; }
-            header h1 { display: none; /* إخفاء اسم البرنامج في الموبايل لتوفير مساحة للأزرار المهمة */ }
-            .search-wrapper { max-width: 150px; }
+            header { height: 60px !important; padding: 0 6px !important; }
+            .container { height: calc(100vh - 60px) !important; }
+            header h1 { display: none; }
+            .header-right { min-width: 45px; }
+            .total-badge { font-size: 0.65rem; white-space: nowrap; }
+            
+            .header-center { padding: 0 4px; }
+            .search-wrapper { max-width: 125px; margin-right: 4px; }
+            #mainSearchInput { padding: 5px 10px; font-size: 0.82rem; border-radius: 12px; }
+            
+            .header-left { gap: 3px; margin-left: auto; }
+            .timer-btn { font-size: 1.3rem !important; padding: 0 3px !important; }
+            
+            .header-btn-lg { 
+                height: 38px !important; 
+                padding: 2px 8px !important; 
+                font-size: 0.8rem !important; 
+                border-radius: 6px !important;
+                white-space: nowrap;
+            }
+
+            .col-keys { width: 50px !important; min-width: 45px !important; }
+            .col-alpha { width: 42px !important; min-width: 38px !important; }
+            .col-titles { width: 135px !important; min-width: 110px !important; }
+            .resizer { width: 4px !important; }
+
+            .key-btn { padding: 8px 1px !important; font-size: 0.85rem !important; }
+            .key-btn .key-count { font-size: 0.6rem !important; padding: 1px 3px !important; }
+            .alpha-btn { padding: 7px 0 !important; font-size: 0.95rem !important; }
+            .song-item { padding: 10px 6px !important; font-size: 0.88rem !important; line-height: 1.35; }
+            .lyrics-scroll-area { font-size: 1.6rem; padding: 15px 8px; line-height: 1.4; }
+            .song-display-header { min-height: 55px; height: 60px; padding: 0 8px; }
+            .song-display-title { font-size: 1.2rem !important; }
+            .song-display-key { font-size: 0.95rem !important; }
         }
 
+        /* ============================================================ */
+        /* 💻 التنسيق الضخم المكتمل والمريح للتابلت والكمبيوتر */
+        /* ============================================================ */
         @media (min-width: 768px) {
+            header { height: 84px; }
             .lyrics-scroll-area { font-size: 2.5rem; line-height: 1.4; padding: 20px 10px; }
             header h1 { font-size: 1.5rem; }
             #mainSearchInput { font-size: 1.2rem; }
@@ -342,7 +356,7 @@
         .panel-header > div { display: -webkit-flex; display: flex; align-items: center; gap: 12px; }
         .panel-content { padding: 20px; flex: 1; -webkit-flex: 1; overflow-y: auto; width: 100%; -webkit-overflow-scrolling: touch; }
         
-        .btn-big { padding: 10px 20px; border: none; border-radius: 5px; color: white; font-family: 'Cairo', sans-serif; cursor: pointer; font-weight: bold; text-align: center; margin-bottom: 15px; width: 100%; display: block; }
+        .btn-big { padding: 10px 14px; border: none; border-radius: 6px; color: white; font-family: 'Cairo', sans-serif; cursor: pointer; font-weight: bold; text-align: center; width: 100%; display: block; font-size: 0.95rem; }
         .btn-import { background: #2980b9; }
         .btn-export { background: #8e44ad; }
         .btn-add { background: #27ae60; }
@@ -467,7 +481,6 @@
         </div>
     </div>
     <div class="header-left">
-        <!-- العداد الذكي المضاف حديثاً (ستوب واتش الخدمة) -->
         <button id="serviceTimerBtn" class="header-btn timer-btn" onclick="toggleTimer()" title="ضغطة للتشغيل/الإيقاف، ضغطة مطولة لتحديد وقت جديد">00:00</button>
         <button class="header-btn header-btn-lg" onclick="tryFullScreen()">FullScreen</button>
         <button class="header-btn header-btn-lg" onclick="openControlPanel()">Settings</button>
@@ -487,7 +500,6 @@
     <div class="resizer" id="resizer2"></div>
     <div class="col-titles" id="colTitles">
         <div class="col-header">العناوين</div>
-        <!-- شريط أدوات تعديل بند التحضير المدمج داخل العمود -->
         <div id="prepItemToolbar">
             <button class="prep-item-btn" onclick="editActivePrepTitle()">العنوان</button>
             <button class="prep-item-btn" onclick="editActivePrepKey()">السلم</button>
@@ -498,22 +510,16 @@
     <div class="resizer" id="resizer3"></div>
     
     <div class="col-lyrics" id="colLyrics">
-        <!-- الرأس الثابت للترنيمة -->
         <div id="songDisplayHeader" class="song-display-header" style="display:none;">
             <div class="header-text-container">
-                <!-- إضافة bdi لحل مشكلة الحروف المتشقلبة -->
                 <span id="displayTitle" class="song-display-title"><bdi></bdi></span>
                 <span id="displayKey" class="song-display-key"></span>
                 <span id="displayKeyHelp" class="hint-lamp" style="cursor:pointer; font-size:1.3rem; margin-right:5px; display:none; user-select:none; -webkit-user-select:none; vertical-align: middle;" onclick="showChordsHelp()" title="دليل الكوردات المساعد">💡</span>
             </div>
         </div>
         
-        <!-- فاصل أفقي للسحب -->
         <div class="resizer-horizontal" id="resizerV">
-            <!-- مقبض أفقي جذاب للفصل الأفقي لعرض الكلمات -->
             <div class="resizer-horizontal-grip"></div>
-
-            <!-- شريط الأدوات الملتصق بالفاصل الأفقي والمنسق بمسافات أمان واسعة -->
             <div id="lyricsToolbar" style="display:none;">
                 <button class="header-btn" onclick="adjustFontSize(1)" title="تكبير الخط">A+</button>
                 <button class="header-btn" onclick="adjustFontSize(-1)" title="تصغير الخط">A-</button>
@@ -521,7 +527,6 @@
             </div>
         </div>
 
-        <!-- الكلمات القابلة للسكرول -->
         <div id="lyrics-view" class="lyrics-scroll-area">
             <div style="color:#999; margin-top:50px; font-size:1rem; font-weight:normal">اختر السلم > الحرف > الترنيمة</div>
         </div>
@@ -538,18 +543,32 @@
         </div>
     </div>
     <div class="panel-content">
-        <div class="backup-section">
-            <button class="btn-big btn-export" onclick="exportData()">💾 حفظ ملف</button>
-            <button class="btn-big btn-import" onclick="document.getElementById('fileInput').click()">📂 استيراد ملف</button>
-            <input type="file" id="fileInput" style="display:none" onchange="importData(this)">
+        <!-- أزرار التصدير والاستيراد المنفصلة -->
+        <div class="backup-section" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-big btn-export" style="flex:1;" onclick="exportSongsData()">💾 حفظ ملف الترانيم</button>
+                <button class="btn-big btn-export" style="flex:1; background:#8e44ad;" onclick="exportPrepsData()">📝 حفظ ملف التحضيرات</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-big btn-import" style="flex:1;" onclick="document.getElementById('fileInputSongs').click()">📂 استيراد ملف ترانيم</button>
+                <button class="btn-big btn-import" style="flex:1; background:#2980b9;" onclick="document.getElementById('fileInputPreps').click()">📂 استيراد ملف تحضيرات</button>
+            </div>
+            <input type="file" id="fileInputSongs" style="display:none" onchange="importSongsData(this)">
+            <input type="file" id="fileInputPreps" style="display:none" onchange="importPrepsData(this)">
         </div>
         
-        <button class="btn-big btn-add" onclick="openEditModal(null)">+ إضافة ترنيمة جديدة</button>
-        <button class="btn-big btn-reload" onclick="loadSongsFromJSON(true)">🔄 تحديث من السيرفر (songs.json)</button>
+        <button class="btn-big btn-add" style="margin-bottom: 10px;" onclick="openEditModal(null)">+ إضافة ترنيمة جديدة</button>
+        
+        <!-- أزرار التحديث المباشر من السيرفر بـ الدمج الذكي -->
+        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+            <button class="btn-big btn-reload" style="flex:1;" onclick="loadSongsFromJSON(true)">🔄 تحديث الترانيم من السيرفر</button>
+            <button class="btn-big btn-reload" style="flex:1; background:#d35400;" onclick="loadPrepsFromJSON(true)">🔄 تحديث التحضيرات من السيرفر</button>
+        </div>
+
         <button class="btn-big" id="installAppBtn" style="background:#16a085; display:none;" onclick="installApp()">⬇️ تثبيت التطبيق على الجهاز</button>
         <p id="installAppInstalledMsg" style="display:none; text-align:center; color:#16a085; font-weight:bold;">✅ التطبيق متثبت على الجهاز</p>
         
-        <br><br>
+        <br>
         <div class="filter-row">
             <select id="panelFilterLetter" onchange="searchPanelSongs()">
                 <option value="">كل الحروف</option>
@@ -683,9 +702,10 @@
 
 <script>
     // ==========================================
-    // ⚙️ ضع رابط التحديث المباشر هنا (Raw Link)
+    // ⚙️ روابط التحديث المباشر من GitHub
     // ==========================================
     var ONLINE_SONGS_URL = "https://raw.githubusercontent.com/misidhom-pixel/ScalesTaraneem-auto-update-1/main/songs.json"; 
+    var ONLINE_PREPS_URL = "https://raw.githubusercontent.com/misidhom-pixel/ScalesTaraneem-auto-update-1/main/preparations.json";
     // ==========================================
 
     var keys = ["C", "Cm", "C#m", "D", "Dm", "Db", "Dbm", "E", "Em", "Eb", "F", "Fm", "F#m", "G", "Gm", "G#m", "A", "Am", "Ab", "Abm", "B", "Bm", "Bb", "Bbm", "No Scale"];
@@ -777,7 +797,7 @@
     var isTimerRunning = false;
     var timerPressTimer;
     var timerDidReset = false;
-    var timerTargetSeconds = null; // الوقت المستهدف بالثواني (null = بدون هدف، عداد عادي)
+    var timerTargetSeconds = null;
     (function loadSavedTimerTarget() {
         var savedMins = parseInt(localStorage.getItem('timerTargetMinutes'), 10);
         if (!isNaN(savedMins) && savedMins > 0) { timerTargetSeconds = savedMins * 60; }
@@ -826,17 +846,15 @@
 
     // --- دوال الستوب واتش الذكي ---
     function toggleTimer() {
-        if (timerDidReset) return; // تجاهل الضغطة إذا كانت نتيجة لضغطة مطولة للتصفير
+        if (timerDidReset) return;
         
         var btn = document.getElementById('serviceTimerBtn');
         if (isTimerRunning) {
-            // إيقاف مؤقت (Pause)
             clearInterval(timerInterval);
             isTimerRunning = false;
             btn.classList.remove('running');
             btn.classList.add('paused');
         } else {
-            // تشغيل (Start)
             isTimerRunning = true;
             btn.classList.remove('paused');
             btn.classList.add('running');
@@ -857,7 +875,6 @@
         var display = (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
         btn.textContent = display;
 
-        // إشارات بصرية بناءً على قرب الوصول للوقت المستهدف
         btn.classList.remove('timer-warn-yellow', 'timer-warn-pulse', 'timer-warn-red');
         if (timerTargetSeconds) {
             if (timerSeconds >= timerTargetSeconds) {
@@ -903,7 +920,6 @@
         localStorage.setItem('timerTargetMinutes', mins);
         closeTimerSetModal();
 
-        // حفظ الوقت المستهدف فقط، بدون تشغيل العداد تلقائياً
         clearInterval(timerInterval);
         timerSeconds = 0;
         isTimerRunning = false;
@@ -936,7 +952,6 @@
             clearTimeout(timerPressTimer);
         }, {passive: true});
         
-        // دعم الماوس للأجهزة العادية
         btn.addEventListener('mousedown', function(e) {
             if (e.button !== 0) return;
             timerDidReset = false;
@@ -1176,51 +1191,99 @@
         }
     }
 
+    // ============================================================
+    // 🔄 دوال الدمج الذكي والتحديث المباشر من السيرفر
+    // ============================================================
     function loadSongsFromJSON(forceUpdate) {
         var xhr = new XMLHttpRequest();
-        var urlToFetch = (forceUpdate && typeof ONLINE_SONGS_URL !== 'undefined' && ONLINE_SONGS_URL.indexOf("http") === 0) ? ONLINE_SONGS_URL : 'songs.json';
+        var urlToFetch = (typeof ONLINE_SONGS_URL !== 'undefined' && ONLINE_SONGS_URL.indexOf("http") === 0) 
+            ? ONLINE_SONGS_URL 
+            : 'songs.json';
+
         xhr.open('GET', urlToFetch + '?v=' + new Date().getTime(), true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    try {
-                        var importedData = JSON.parse(xhr.responseText);
-                        var dataChanged = false;
-                        if (importedData && typeof importedData === 'object' && !Array.isArray(importedData)) {
-                            if (importedData.songs && Array.isArray(importedData.songs)) {
-                                if (importedData.songs.length !== songs.length || forceUpdate) {
-                                    songs = importedData.songs;
-                                    localStorage.setItem('mySongs', JSON.stringify(songs));
-                                    dataChanged = true;
-                                }
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    var importedData = JSON.parse(xhr.responseText);
+                    var serverSongs = null;
+
+                    if (importedData && typeof importedData === 'object' && !Array.isArray(importedData)) {
+                        if (importedData.songs && Array.isArray(importedData.songs)) { serverSongs = importedData.songs; }
+                    } else if (Array.isArray(importedData)) {
+                        serverSongs = importedData;
+                    }
+
+                    if (serverSongs && Array.isArray(serverSongs)) {
+                        // الدمج الذكي للترانيم: استبدال القديم وتعيين الجديد مع الحفاظ على الترانيم المضافة محلياً
+                        var mergedSongs = songs.slice();
+                        for (var i = 0; i < serverSongs.length; i++) {
+                            var sSong = serverSongs[i];
+                            var existingIndex = -1;
+                            for (var j = 0; j < mergedSongs.length; j++) {
+                                if (Number(mergedSongs[j].id) === Number(sSong.id)) { existingIndex = j; break; }
                             }
-                            if (importedData.preparations && Array.isArray(importedData.preparations)) {
-                                preparations = importedData.preparations;
-                                localStorage.setItem('myPreparations', JSON.stringify(preparations));
-                                dataChanged = true;
-                            }
-                            if (importedData.customFontSizes && typeof importedData.customFontSizes === 'object') {
-                                customFontSizes = importedData.customFontSizes;
-                                localStorage.setItem('myCustomFontSizes', JSON.stringify(customFontSizes));
-                                dataChanged = true;
-                            }
-                            if (dataChanged || forceUpdate) {
-                                refreshUI();
-                                if(forceUpdate) alert("تم التحديث من السيرفر بنجاح! (شمل الترانيم والتحضيرات)");
-                            }
-                        } else if(Array.isArray(importedData)) {
-                            if (importedData.length !== songs.length || forceUpdate) {
-                                songs = importedData;
-                                localStorage.setItem('mySongs', JSON.stringify(songs));
-                                refreshUI();
-                                if(forceUpdate) alert("تم تحديث الترانيم من السيرفر بنجاح!");
+                            if (existingIndex > -1) {
+                                mergedSongs[existingIndex] = sSong;
+                            } else {
+                                mergedSongs.push(sSong);
                             }
                         }
-                    } catch(e) { 
-                        if(forceUpdate) alert("خطأ في قراءة ملف السيرفر.");
+
+                        songs = mergedSongs;
+                        localStorage.setItem('mySongs', JSON.stringify(songs));
+                        refreshUI();
+                        if (forceUpdate) alert("تم دمج وتحديث الترانيم من السيرفر بنجاح!");
                     }
-                } else {
-                    if(forceUpdate) alert("فشل الاتصال بالسيرفر. تأكد من الإنترنت.");
+                } catch(e) { 
+                    if(forceUpdate) alert("خطأ في قراءة ملف السيرفر.");
+                }
+            }
+        };
+        xhr.send();
+    }
+
+    function loadPrepsFromJSON(forceUpdate) {
+        var xhr = new XMLHttpRequest();
+        var urlToFetch = (typeof ONLINE_PREPS_URL !== 'undefined' && ONLINE_PREPS_URL.indexOf("http") === 0) 
+            ? ONLINE_PREPS_URL 
+            : 'preparations.json';
+
+        xhr.open('GET', urlToFetch + '?v=' + new Date().getTime(), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    var importedData = JSON.parse(xhr.responseText);
+                    var serverPreps = null;
+
+                    if (importedData && typeof importedData === 'object' && !Array.isArray(importedData)) {
+                        if (importedData.preparations && Array.isArray(importedData.preparations)) { serverPreps = importedData.preparations; }
+                    } else if (Array.isArray(importedData)) {
+                        serverPreps = importedData;
+                    }
+
+                    if (serverPreps && Array.isArray(serverPreps)) {
+                        // الدمج الذكي للتحضيرات: دمج التحضيرات الجديدة مع الاحتفاظ بالتحضيرات المنشأة محلياً
+                        var mergedPreps = preparations.slice();
+                        for (var i = 0; i < serverPreps.length; i++) {
+                            var sPrep = serverPreps[i];
+                            var existingIndex = -1;
+                            for (var j = 0; j < mergedPreps.length; j++) {
+                                if (Number(mergedPreps[j].id) === Number(sPrep.id)) { existingIndex = j; break; }
+                            }
+                            if (existingIndex > -1) {
+                                mergedPreps[existingIndex] = sPrep;
+                            } else {
+                                mergedPreps.push(sPrep);
+                            }
+                        }
+
+                        preparations = mergedPreps;
+                        localStorage.setItem('myPreparations', JSON.stringify(preparations));
+                        refreshUI();
+                        if (forceUpdate) alert("تم دمج وتحديث قائمة التحضيرات من السيرفر بنجاح!");
+                    }
+                } catch(e) { 
+                    if(forceUpdate) alert("خطأ في قراءة ملف التحضيرات من السيرفر.");
                 }
             }
         };
@@ -1228,34 +1291,7 @@
     }
     
     window.addEventListener('online', function() { 
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'songs.json?v=' + new Date().getTime(), true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                 try {
-                    var importedData = JSON.parse(xhr.responseText);
-                    var dataChanged = false;
-                    if (importedData && typeof importedData === 'object' && !Array.isArray(importedData)) {
-                        if (importedData.songs && Array.isArray(importedData.songs) && importedData.songs.length !== songs.length) {
-                            songs = importedData.songs;
-                            localStorage.setItem('mySongs', JSON.stringify(songs));
-                            dataChanged = true;
-                        }
-                        if (importedData.preparations && Array.isArray(importedData.preparations)) {
-                            preparations = importedData.preparations;
-                            localStorage.setItem('myPreparations', JSON.stringify(preparations));
-                            dataChanged = true;
-                        }
-                        if (dataChanged) refreshUI();
-                    } else if(Array.isArray(importedData) && importedData.length !== songs.length) {
-                        songs = importedData;
-                        localStorage.setItem('mySongs', JSON.stringify(songs));
-                        refreshUI();
-                    }
-                 } catch(e) {}
-            }
-        };
-        xhr.send();
+        loadSongsFromJSON(false);
     });
 
     function init() {
@@ -1283,7 +1319,7 @@
         
         if(localStorage.getItem('nightMode') === 'on') { document.body.classList.add('dark-mode'); }
         
-        bindTimerLongPress(); // تفعيل ضغطة الستوب واتش
+        bindTimerLongPress();
         loadSongsFromJSON(false);
         refreshUI();
         updateHeaderStyles(90);
@@ -1658,7 +1694,7 @@
             if (savedSize) {
                 currentFontSize = parseFloat(savedSize);
             } else {
-                currentFontSize = (window.innerWidth < 768 ? 1.7 : 2.2);
+                currentFontSize = (window.innerWidth < 768 ? 1.6 : 2.5);
             }
             lyricsView.style.fontSize = currentFontSize + 'rem';
             
@@ -1877,7 +1913,6 @@
         document.getElementById('chordsModal').style.display = 'none';
     }
 
-    // --- دوال شريط أدوات التحضير الجديد ---
     function getActivePrepItem() {
         if (activePrepId === null || currentActivePrepItemIndex === null) return null;
         var prep = null;
@@ -1986,8 +2021,6 @@
             openPrepLyricsModal(data.prep.id, data.index);
         }
     }
-
-    // ==========================================
 
     function savePreparations() {
         localStorage.setItem('myPreparations', JSON.stringify(preparations));
@@ -3179,84 +3212,118 @@
         }
     }
 
-    function exportData() {
+    // ============================================================
+    // 💾 دوال تصدير واستيراد البيانات المنفصلة (ترانيم / تحضيرات)
+    // ============================================================
+    function exportSongsData() {
         try {
-            var backupData = {
-                songs: songs,
-                preparations: preparations,
-                customFontSizes: customFontSizes
-            };
-            var dataStr = JSON.stringify(backupData);
-            
+            var dataStr = JSON.stringify(songs);
             var file = new File([dataStr], "songs_backup.json", {type: "application/json"});
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 navigator.share({
                     files: [file],
                     title: 'نسخة احتياطية للترانيم',
-                    text: 'ملف المزامنة لتطبيق Scales'
-                }).catch(function(error) {
-                    fallbackDownload(dataStr);
+                    text: 'ملف الترانيم لتطبيق Scales'
+                }).catch(function() {
+                    fallbackDownload(dataStr, "songs_backup.json");
                 });
             } else {
-                fallbackDownload(dataStr);
+                fallbackDownload(dataStr, "songs_backup.json");
             }
         } catch(e) { 
-            alert("عذراً، حدث خطأ أثناء التصدير."); 
+            alert("عذراً، حدث خطأ أثناء تصدير الترانيم."); 
         }
     }
 
-    function fallbackDownload(dataStr) {
+    function exportPrepsData() {
+        try {
+            var dataStr = JSON.stringify(preparations);
+            var file = new File([dataStr], "preparations_backup.json", {type: "application/json"});
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    files: [file],
+                    title: 'نسخة احتياطية للتحضيرات',
+                    text: 'ملف التحضيرات لتطبيق Scales'
+                }).catch(function() {
+                    fallbackDownload(dataStr, "preparations_backup.json");
+                });
+            } else {
+                fallbackDownload(dataStr, "preparations_backup.json");
+            }
+        } catch(e) { 
+            alert("عذراً، حدث خطأ أثناء تصدير التحضيرات."); 
+        }
+    }
+
+    function fallbackDownload(dataStr, fileName) {
         var blob = new Blob([dataStr], {type: "application/json"});
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = "songs_backup.json";
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
     }
 
-    function importData(input) {
+    function importSongsData(input) {
         var file = input.files[0];
         if (!file) return;
         var reader = new FileReader();
         reader.onload = function(e) {
             try {
                 var importedData = JSON.parse(e.target.result);
-                
-                if (importedData && typeof importedData === 'object' && !Array.isArray(importedData)) {
-                    if (importedData.songs && Array.isArray(importedData.songs)) {
-                        if (confirm("تم اكتشاف ملف تحديث كامل. سيتم استبدال الترانيم والتحضيرات الحالية بالبيانات المستوردة. هل تريد الاستمرار؟")) {
-                            songs = importedData.songs;
-                            localStorage.setItem('mySongs', JSON.stringify(songs));
-                            
-                            if (importedData.preparations && Array.isArray(importedData.preparations)) {
-                                preparations = importedData.preparations;
-                                localStorage.setItem('myPreparations', JSON.stringify(preparations));
-                            }
-                            
-                            if (importedData.customFontSizes && typeof importedData.customFontSizes === 'object') {
-                                customFontSizes = importedData.customFontSizes;
-                                localStorage.setItem('myCustomFontSizes', JSON.stringify(customFontSizes));
-                            }
-                            
-                            alert("تم استيراد الترانيم والتحضيرات بنجاح تام!");
-                            location.reload();
-                        }
-                    } else {
-                        alert("محتوى الملف غير صالح للاستيراد.");
-                    }
-                } 
-                else if (importedData && Array.isArray(importedData)) {
-                    if (confirm("تم اكتشاف ملف احتياطي قديم (ترانيم فقط). هل تريد استيراده واستبدال الترانيم الحالية؟ (لن يتم المساس بتحضيراتك الحالية)")) {
-                        songs = importedData;
+                var newSongs = null;
+
+                if (importedData && typeof importedData === 'object' && !Array.isArray(importedData) && importedData.songs) {
+                    newSongs = importedData.songs;
+                } else if (Array.isArray(importedData)) {
+                    newSongs = importedData;
+                }
+
+                if (newSongs && Array.isArray(newSongs)) {
+                    if (confirm("هل تريد استبدال الترانيم الحالية بالبيانات المستوردة؟ (لن تتأثر تحضيراتك الشخصية)")) {
+                        songs = newSongs;
                         localStorage.setItem('mySongs', JSON.stringify(songs));
                         alert("تم استيراد قائمة الترانيم بنجاح!");
                         location.reload();
                     }
-                } else { 
-                    alert("تنسيق الملف غير مدعوم."); 
+                } else {
+                    alert("محتوى الملف غير صالح للترانيم.");
+                }
+            } catch (err) { 
+                alert("خطأ في قراءة وتحليل الملف"); 
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function importPrepsData(input) {
+        var file = input.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var importedData = JSON.parse(e.target.result);
+                var newPreps = null;
+
+                if (importedData && typeof importedData === 'object' && !Array.isArray(importedData) && importedData.preparations) {
+                    newPreps = importedData.preparations;
+                } else if (Array.isArray(importedData)) {
+                    newPreps = importedData;
+                }
+
+                if (newPreps && Array.isArray(newPreps)) {
+                    if (confirm("هل تريد استبدال قائمة التحضيرات الحالية بالبيانات المستوردة؟ (لن تتأثر الترانيم الحالية)")) {
+                        preparations = newPreps;
+                        localStorage.setItem('myPreparations', JSON.stringify(preparations));
+                        alert("تم استيراد قائمة التحضيرات بنجاح!");
+                        location.reload();
+                    }
+                } else {
+                    alert("محتوى الملف غير صالح للتحضيرات.");
                 }
             } catch (err) { 
                 alert("خطأ في قراءة وتحليل الملف"); 
@@ -3304,7 +3371,6 @@
         deferredInstallPrompt = null;
     });
 
-    // لو التطبيق شغال فعلاً كتطبيق مثبت (standalone)، اعرض رسالة "متثبت" بدل زرار التثبيت
     (function checkIfAlreadyInstalled() {
         var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         if (isStandalone) {
