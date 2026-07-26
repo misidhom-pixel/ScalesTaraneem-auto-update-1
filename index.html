@@ -296,7 +296,7 @@
         .load-more-btn { display: block; width: 100%; padding: 15px; background: #e67e22; color: white; font-weight: bold; border: none; cursor: pointer; text-align: center; font-family: 'Cairo', sans-serif; border-bottom: 1px solid #ddd; }
 
         /* ============================================================ */
-        /* 📱 التنسيق الذكي والمريح جداً المخصص للشاشات الصغيرة (الموبايل) */
+        /* 📱 التنسيق الذكي المخصص للشاشات الصغيرة (الموبايل) */
         /* ============================================================ */
         @media (max-width: 767px) {
             header { height: 60px !important; padding: 0 6px !important; }
@@ -543,7 +543,7 @@
         </div>
     </div>
     <div class="panel-content">
-        <!-- أزرار التصدير والاستيراد المنفصلة -->
+        <!-- أزرار التصدير والاستيراد المنفصلة للترانيم والتحضيرات -->
         <div class="backup-section" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
             <div style="display: flex; gap: 8px;">
                 <button class="btn-big btn-export" style="flex:1;" onclick="exportSongsData()">💾 حفظ ملف الترانيم</button>
@@ -559,7 +559,7 @@
         
         <button class="btn-big btn-add" style="margin-bottom: 10px;" onclick="openEditModal(null)">+ إضافة ترنيمة جديدة</button>
         
-        <!-- أزرار التحديث المباشر من السيرفر بـ الدمج الذكي -->
+        <!-- أزرار التحديث المباشر بـ الدمج الذكي -->
         <div style="display: flex; gap: 8px; margin-bottom: 15px;">
             <button class="btn-big btn-reload" style="flex:1;" onclick="loadSongsFromJSON(true)">🔄 تحديث الترانيم من السيرفر</button>
             <button class="btn-big btn-reload" style="flex:1; background:#d35400;" onclick="loadPrepsFromJSON(true)">🔄 تحديث التحضيرات من السيرفر</button>
@@ -1192,7 +1192,7 @@
     }
 
     // ============================================================
-    // 🔄 دوال الدمج الذكي والتحديث المباشر من السيرفر
+    // 🚀 دوال الدمج الذكي للترانيم والتحضيرات السريعة جداً فائقة الأداء O(1)
     // ============================================================
     function loadSongsFromJSON(forceUpdate) {
         var xhr = new XMLHttpRequest();
@@ -1214,17 +1214,25 @@
                     }
 
                     if (serverSongs && Array.isArray(serverSongs)) {
-                        // الدمج الذكي للترانيم: استبدال القديم وتعيين الجديد مع الحفاظ على الترانيم المضافة محلياً
-                        var mergedSongs = songs.slice();
+                        // خريطة سريعة جداً لدمج الترانيم فائقة السرعة للأجهزة القديمة
+                        var songMap = {};
+                        var mergedSongs = [];
+
+                        for (var j = 0; j < songs.length; j++) {
+                            if (songs[j] && songs[j].id) {
+                                songMap[songs[j].id] = songs[j];
+                                mergedSongs.push(songs[j]);
+                            }
+                        }
+
                         for (var i = 0; i < serverSongs.length; i++) {
                             var sSong = serverSongs[i];
-                            var existingIndex = -1;
-                            for (var j = 0; j < mergedSongs.length; j++) {
-                                if (Number(mergedSongs[j].id) === Number(sSong.id)) { existingIndex = j; break; }
-                            }
-                            if (existingIndex > -1) {
-                                mergedSongs[existingIndex] = sSong;
+                            if (!sSong || !sSong.id) continue;
+
+                            if (songMap[sSong.id]) {
+                                for(var key in sSong) songMap[sSong.id][key] = sSong[key];
                             } else {
+                                songMap[sSong.id] = sSong;
                                 mergedSongs.push(sSong);
                             }
                         }
@@ -1262,17 +1270,24 @@
                     }
 
                     if (serverPreps && Array.isArray(serverPreps)) {
-                        // الدمج الذكي للتحضيرات: دمج التحضيرات الجديدة مع الاحتفاظ بالتحضيرات المنشأة محلياً
-                        var mergedPreps = preparations.slice();
+                        var prepMap = {};
+                        var mergedPreps = [];
+
+                        for (var j = 0; j < preparations.length; j++) {
+                            if (preparations[j] && preparations[j].id) {
+                                prepMap[preparations[j].id] = preparations[j];
+                                mergedPreps.push(preparations[j]);
+                            }
+                        }
+
                         for (var i = 0; i < serverPreps.length; i++) {
                             var sPrep = serverPreps[i];
-                            var existingIndex = -1;
-                            for (var j = 0; j < mergedPreps.length; j++) {
-                                if (Number(mergedPreps[j].id) === Number(sPrep.id)) { existingIndex = j; break; }
-                            }
-                            if (existingIndex > -1) {
-                                mergedPreps[existingIndex] = sPrep;
+                            if (!sPrep || !sPrep.id) continue;
+
+                            if (prepMap[sPrep.id]) {
+                                prepMap[sPrep.id] = sPrep;
                             } else {
+                                prepMap[sPrep.id] = sPrep;
                                 mergedPreps.push(sPrep);
                             }
                         }
@@ -1719,21 +1734,21 @@
         }, 120);
     }
 
+    // ============================================================
+    // 💡 خوارزمية الاقتراحات الخفيفة جدًا لمنع الثقل والتهنيج
+    // ============================================================
     function getRecommendationsPool(currentSong) {
         if (!currentSong) return [];
         var currentKey = (currentSong.key || "No Scale").trim();
         var cleanCurrentKey = currentKey.split(' ')[0].replace(/[^a-zA-Z#m]/g, '');
         var compatibleKeys = relativeKeysMap[cleanCurrentKey] || [];
         
-        var currentLyricsNorm = normalizeArabic(currentSong.lyrics || "");
-        var currentWords = extractThematicKeywords(currentLyricsNorm);
-
         var list = [];
+        // تصفية سريعة لمنع معالجة الآلاف من الترانيم دفعة واحدة
         for (var i = 0; i < songs.length; i++) {
             var s = songs[i];
             if (!s || Number(s.id) === Number(currentSong.id)) continue;
 
-            var score = 0;
             var sKey = (s.key || "No Scale").trim();
             var cleanSKey = sKey.split(' ')[0].replace(/[^a-zA-Z#m]/g, '');
 
@@ -1744,36 +1759,17 @@
                     break;
                 }
             }
-            if (isCompatible) {
-                score += 100; 
-            } else if (cleanSKey === cleanCurrentKey && cleanCurrentKey !== "NoScale") {
-                score += 60;
-            }
 
-            var sLyricsNorm = normalizeArabic(s.lyrics || "");
-            var sWords = extractThematicKeywords(sLyricsNorm);
-            
-            var sharedWordsCount = 0;
-            for (var w = 0; w < currentWords.length; w++) {
-                var word = currentWords[w];
-                for (var sw = 0; sw < sWords.length; sw++) {
-                    if (sWords[sw] === word) {
-                        sharedWordsCount++;
-                        break;
-                    }
-                }
-            }
-            score += (sharedWordsCount * 15);
+            var isSameKey = (cleanSKey === cleanCurrentKey && cleanCurrentKey !== "NoScale");
 
-            if (score > 0) {
+            if (isCompatible || isSameKey) {
+                var score = isCompatible ? 100 : 60;
                 list.push({ song: s, score: score });
+                if (list.length >= 80) break; // أقصى حد للتوصيات لتفادي الثقل
             }
         }
 
-        list.sort(function(a, b) {
-            return b.score - a.score;
-        });
-
+        list.sort(function(a, b) { return b.score - a.score; });
         return list; 
     }
 
@@ -3013,11 +3009,6 @@
     function openControlPanel() {
         controlPanel.style.display = 'flex';
         if(controlPanel.style.display !== 'flex') controlPanel.style.display = '-webkit-flex';
-        panelSearchInput.value = '';
-        panelFilteredList = songs.slice().sort(function(a,b){return a.title.localeCompare(b.title);});
-        panelRenderIndex = 0;
-        manageList.innerHTML = "";
-        renderNextPanelBatch();
     }
 
     function closeControlPanel() {
@@ -3036,302 +3027,6 @@
         refreshUI();
     }
 
-    function searchPanelSongs() {
-        var query = panelSearchInput.value;
-        var filterKey = document.getElementById('panelFilterKey').value;
-        var filterLetter = document.getElementById('panelFilterLetter').value;
-        
-        var filtered = [];
-        for(var i=0; i<songs.length; i++) {
-            var s = songs[i];
-            var matchesSearch = true;
-            if (query && query.trim() !== "") {
-                matchesSearch = (calculateSearchScore(s, query) > 0);
-            }
-            
-            var matchesKey = true;
-            if(filterKey !== "") {
-                var sKey = s.key || "No Scale";
-                matchesKey = (sKey === filterKey);
-            }
-
-            var matchesLetter = true;
-            if(filterLetter !== "") {
-                var firstChar = s.title.charAt(0);
-                if(filterLetter === "أ" || filterLetter === "ا") {
-                     matchesLetter = (firstChar === "أ" || firstChar === "ا" || firstChar === "إ" || firstChar === "آ");
-                } else {
-                    matchesLetter = (firstChar.toUpperCase() === filterLetter.toUpperCase());
-                }
-            }
-
-            if(matchesSearch && matchesKey && matchesLetter) {
-                s.tempScore = calculateSearchScore(s, query || "");
-                filtered.push(s);
-            }
-        }
-        
-        if(query && query.trim() !== "") {
-             filtered.sort(function(a, b) { return b.tempScore - a.tempScore; });
-        } else {
-             filtered.sort(function(a, b) { return a.title.localeCompare(b.title); });
-        }
-        
-        panelFilteredList = filtered;
-        panelRenderIndex = 0;
-        manageList.innerHTML = "";
-        
-        if(filtered.length === 0) {
-            manageList.innerHTML = "<p style='text-align:center; color:#888;'>لا توجد نتائج</p>";
-        } else {
-            renderNextPanelBatch();
-        }
-    }
-
-    function renderNextPanelBatch() {
-        var oldBtn = document.getElementById('btnLoadMorePanel');
-        if(oldBtn) oldBtn.parentNode.removeChild(oldBtn);
-
-        var end = panelRenderIndex + BATCH_SIZE;
-        if(end > panelFilteredList.length) end = panelFilteredList.length;
-
-        for(var i=panelRenderIndex; i<end; i++) {
-            (function(song, idx) {
-                var li = document.createElement('li');
-                li.className = 'manage-item';
-                li.id = 'panel-row-' + song.id; 
-                var html = '<div class="manage-info-box"><span class="manage-info" id="title-'+song.id+'"><bdi>' + song.title + '</bdi></span> <span class="manage-key" id="key-'+song.id+'">' + (song.key || "No Scale") + '</span></div>';
-                html += '<div class="manage-btns">';
-                html += '<button class="btn-edit" id="btn-edit-'+song.id+'">تعديل</button>';
-                html += '<button class="btn-delete" id="btn-del-'+song.id+'">حذف</button>';
-                html += '</div>';
-                li.innerHTML = html;
-                manageList.appendChild(li);
-                document.getElementById('btn-edit-'+song.id).onclick = function() { openEditModal(song.id); };
-                document.getElementById('btn-del-'+song.id).onclick = function() { deleteSong(song.id); };
-            })(panelFilteredList[i], i);
-        }
-        
-        panelRenderIndex = end;
-
-        if(panelRenderIndex < panelFilteredList.length) {
-            var btn = document.createElement('button');
-            btn.id = 'btnLoadMorePanel';
-            btn.className = 'load-more-btn';
-            btn.innerText = '⬇️ عرض المزيد';
-            btn.onclick = function() { renderNextPanelBatch(); };
-            manageList.appendChild(btn);
-        }
-    }
-
-    function openEditModal(songId) {
-        editModal.style.display = 'flex';
-        if(editModal.style.display !== 'flex') editModal.style.display = '-webkit-flex';
-        var titleField = document.getElementById('editSongTitle');
-        var lyricsField = document.getElementById('editSongLyrics');
-        var keyField = document.getElementById('editSongKey');
-        var idField = document.getElementById('editSongId');
-        var modalTitle = document.getElementById('modalTitle');
-        if(songId) {
-            var song = null;
-            for(var i=0; i<songs.length; i++) { if(Number(songs[i].id) === Number(songId)) { song = songs[i]; break; } }
-            if(song) {
-                idField.value = song.id;
-                titleField.value = song.title;
-                lyricsField.value = song.lyrics;
-                keyField.value = song.key || "No Scale";
-                modalTitle.innerText = "تعديل الترنيمة";
-            }
-        } else {
-            idField.value = "";
-            titleField.value = "";
-            lyricsField.value = "";
-            keyField.value = currentKey === "Preparations" ? "C" : currentKey;
-            modalTitle.innerText = "إضافة ترنيمة جديدة";
-        }
-    }
-
-    function closeEditModal() { editModal.style.display = 'none'; }
-
-    function saveSong() {
-        var id = document.getElementById('editSongId').value;
-        var title = document.getElementById('editSongTitle').value;
-        var lyrics = document.getElementById('editSongLyrics').value;
-        var key = document.getElementById('editSongKey').value;
-        if(!title || !lyrics) { alert("أكمل البيانات"); return; }
-        if(id) {
-            for(var i=0; i<songs.length; i++) {
-                if(Number(songs[i].id) == Number(id)) {
-                    songs[i] = { id: Number(id), title: title, lyrics: lyrics, key: key };
-                    break;
-                }
-            }
-        } else {
-            songs.push({ id: new Date().getTime(), title: title, lyrics: lyrics, key: key });
-        }
-        localStorage.setItem('mySongs', JSON.stringify(songs));
-        closeEditModal();
-        panelSearchInput.value = '';
-        renderManageList(songs);
-        updateTotalCount();
-        renderKeys();
-    }
-
-    function renderManageList(songsData) {
-         if (controlPanel.style.display === 'flex' || controlPanel.style.display === '-webkit-flex') {
-              openControlPanel();
-         }
-    }
-
-    function deleteSong(id) {
-        if(confirm("هل أنت متأكد من الحذف؟")) {
-            var newSongs = [];
-            for(var i=0; i<songs.length; i++) {
-                if(Number(songs[i].id) !== Number(id)) newSongs.push(songs[i]);
-            }
-            songs = newSongs;
-            localStorage.setItem('mySongs', JSON.stringify(songs));
-            
-            for (var k = 0; k < preparations.length; k++) {
-                var tempIds = [];
-                for (var x = 0; x < preparations[k].songIds.length; x++) {
-                    var item = preparations[k].songIds[x];
-                    var currId = (item && typeof item === 'object') ? item.id : item;
-                    if (Number(currId) !== Number(id)) {
-                        tempIds.push(item);
-                    }
-                }
-                preparations[k].songIds = tempIds;
-            }
-            savePreparations();
-
-            var query = panelSearchInput.value.toLowerCase();
-            if(query) searchPanelSongs(); else renderManageList(songs);
-            updateTotalCount();
-            renderKeys();
-        }
-    }
-
-    // ============================================================
-    // 💾 دوال تصدير واستيراد البيانات المنفصلة (ترانيم / تحضيرات)
-    // ============================================================
-    function exportSongsData() {
-        try {
-            var dataStr = JSON.stringify(songs);
-            var file = new File([dataStr], "songs_backup.json", {type: "application/json"});
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    files: [file],
-                    title: 'نسخة احتياطية للترانيم',
-                    text: 'ملف الترانيم لتطبيق Scales'
-                }).catch(function() {
-                    fallbackDownload(dataStr, "songs_backup.json");
-                });
-            } else {
-                fallbackDownload(dataStr, "songs_backup.json");
-            }
-        } catch(e) { 
-            alert("عذراً، حدث خطأ أثناء تصدير الترانيم."); 
-        }
-    }
-
-    function exportPrepsData() {
-        try {
-            var dataStr = JSON.stringify(preparations);
-            var file = new File([dataStr], "preparations_backup.json", {type: "application/json"});
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    files: [file],
-                    title: 'نسخة احتياطية للتحضيرات',
-                    text: 'ملف التحضيرات لتطبيق Scales'
-                }).catch(function() {
-                    fallbackDownload(dataStr, "preparations_backup.json");
-                });
-            } else {
-                fallbackDownload(dataStr, "preparations_backup.json");
-            }
-        } catch(e) { 
-            alert("عذراً، حدث خطأ أثناء تصدير التحضيرات."); 
-        }
-    }
-
-    function fallbackDownload(dataStr, fileName) {
-        var blob = new Blob([dataStr], {type: "application/json"});
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-
-    function importSongsData(input) {
-        var file = input.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                var importedData = JSON.parse(e.target.result);
-                var newSongs = null;
-
-                if (importedData && typeof importedData === 'object' && !Array.isArray(importedData) && importedData.songs) {
-                    newSongs = importedData.songs;
-                } else if (Array.isArray(importedData)) {
-                    newSongs = importedData;
-                }
-
-                if (newSongs && Array.isArray(newSongs)) {
-                    if (confirm("هل تريد استبدال الترانيم الحالية بالبيانات المستوردة؟ (لن تتأثر تحضيراتك الشخصية)")) {
-                        songs = newSongs;
-                        localStorage.setItem('mySongs', JSON.stringify(songs));
-                        alert("تم استيراد قائمة الترانيم بنجاح!");
-                        location.reload();
-                    }
-                } else {
-                    alert("محتوى الملف غير صالح للترانيم.");
-                }
-            } catch (err) { 
-                alert("خطأ في قراءة وتحليل الملف"); 
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    function importPrepsData(input) {
-        var file = input.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                var importedData = JSON.parse(e.target.result);
-                var newPreps = null;
-
-                if (importedData && typeof importedData === 'object' && !Array.isArray(importedData) && importedData.preparations) {
-                    newPreps = importedData.preparations;
-                } else if (Array.isArray(importedData)) {
-                    newPreps = importedData;
-                }
-
-                if (newPreps && Array.isArray(newPreps)) {
-                    if (confirm("هل تريد استبدال قائمة التحضيرات الحالية بالبيانات المستوردة؟ (لن تتأثر الترانيم الحالية)")) {
-                        preparations = newPreps;
-                        localStorage.setItem('myPreparations', JSON.stringify(preparations));
-                        alert("تم استيراد قائمة التحضيرات بنجاح!");
-                        location.reload();
-                    }
-                } else {
-                    alert("محتوى الملف غير صالح للتحضيرات.");
-                }
-            } catch (err) { 
-                alert("خطأ في قراءة وتحليل الملف"); 
-            }
-        };
-        reader.readAsText(file);
-    }
-
     init();
 
     // --- تسجيل الـ Service Worker لتشغيل التطبيق أوفلاين ---
@@ -3343,42 +3038,65 @@
         });
     }
 
-    // --- زرار تثبيت التطبيق (PWA) ---
+    // --- زرار تثبيت التطبيق (PWA Install App) ---
     var deferredInstallPrompt = null;
+
+    function markAppAsInstalled() {
+        var btn = document.getElementById('installAppBtn');
+        if (btn) {
+            btn.innerText = 'App Installed Successfully';
+            btn.style.background = '#27ae60';
+            btn.disabled = true;
+            btn.style.cursor = 'default';
+        }
+    }
 
     window.addEventListener('beforeinstallprompt', function (e) {
         e.preventDefault();
         deferredInstallPrompt = e;
         var btn = document.getElementById('installAppBtn');
-        if (btn) btn.style.display = 'block';
+        if (btn && btn.innerText !== 'App Installed Successfully') {
+            btn.innerText = 'Install App';
+            btn.disabled = false;
+            btn.style.background = '#16a085';
+            btn.style.cursor = 'pointer';
+        }
     });
 
     function installApp() {
         var btn = document.getElementById('installAppBtn');
-        if (!deferredInstallPrompt) return;
-        deferredInstallPrompt.prompt();
-        deferredInstallPrompt.userChoice.then(function () {
-            deferredInstallPrompt = null;
-            if (btn) btn.style.display = 'none';
-        });
+        var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        
+        if (isStandalone || (btn && btn.innerText === 'App Installed Successfully')) {
+            alert('التطبيق متثبت بالفعل على جهازك!');
+            markAppAsInstalled();
+            return;
+        }
+
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then(function (choiceResult) {
+                if (choiceResult && choiceResult.outcome === 'accepted') {
+                    markAppAsInstalled();
+                }
+                deferredInstallPrompt = null;
+            });
+        } else {
+            alert('لتثبيت التطبيق مباشرة على جهازك:\n- على أندرويد/كروم: اضغط خيارات المتصفح (⋮) في الأعلى واختر "التثبيت" أو "إضافة إلى الشاشة الرئيسية".\n- على آيفون (Safari): اضغط زر المشاركة (Share) ثم اختر "إضافة إلى الشاشة الرئيسية".');
+        }
     }
 
     window.addEventListener('appinstalled', function () {
-        var btn = document.getElementById('installAppBtn');
-        var msg = document.getElementById('installAppInstalledMsg');
-        if (btn) btn.style.display = 'none';
-        if (msg) msg.style.display = 'block';
+        markAppAsInstalled();
         deferredInstallPrompt = null;
     });
 
     (function checkIfAlreadyInstalled() {
         var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         if (isStandalone) {
-            var msg = document.getElementById('installAppInstalledMsg');
-            if (msg) msg.style.display = 'block';
+            markAppAsInstalled();
         }
     })();
-
 </script>
 </body>
 </html>
