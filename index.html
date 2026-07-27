@@ -296,7 +296,7 @@
         .load-more-btn { display: block; width: 100%; padding: 15px; background: #e67e22; color: white; font-weight: bold; border: none; cursor: pointer; text-align: center; font-family: 'Cairo', sans-serif; border-bottom: 1px solid #ddd; }
 
         /* ============================================================ */
-        /* 📱 التنسيق الذكي المخصص للشاشات الصغيرة (الموبايل) */
+        /* 📱 التنسيق الذكي والمريح جداً المخصص للشاشات الصغيرة (الموبايل) */
         /* ============================================================ */
         @media (max-width: 767px) {
             header { height: 60px !important; padding: 0 6px !important; }
@@ -369,12 +369,12 @@
         .filter-row select { -webkit-flex: 1; flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Cairo', sans-serif; font-size: 1rem; background: white; font-weight: bold; }
 
         .manage-list { list-style: none; padding: 0; margin: 0; }
-        .manage-item { background: white; padding: 15px; border-bottom: 1px solid #ddd; overflow: hidden; color: #000; }
+        .manage-item { background: white; padding: 12px 15px; border-bottom: 1px solid #ddd; overflow: hidden; color: #000; display: flex; justify-content: space-between; align-items: center; }
         .manage-item:hover { background-color: #eee; }
-        .manage-info-box { float: right; }
-        .manage-btns { float: left; }
-        .manage-key { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; color: #000; }
-        .manage-btns button { margin-left: 5px; padding: 5px 10px; border: none; border-radius: 3px; color: white; cursor: pointer; }
+        .manage-info-box { flex: 1; text-align: right; }
+        .manage-btns { display: flex; gap: 5px; flex-shrink: 0; }
+        .manage-key { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; color: #000; font-weight: bold; }
+        .manage-btns button { padding: 6px 12px; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: bold; font-family: 'Cairo', sans-serif; }
         
         .btn-edit { background: #f39c12; }
         .btn-delete { background: #c0392b; }
@@ -543,7 +543,7 @@
         </div>
     </div>
     <div class="panel-content">
-        <!-- أزرار التصدير والاستيراد المنفصلة للترانيم والتحضيرات -->
+        <!-- أزرار التصدير والاستيراد المنفصلة -->
         <div class="backup-section" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
             <div style="display: flex; gap: 8px;">
                 <button class="btn-big btn-export" style="flex:1;" onclick="exportSongsData()">💾 حفظ ملف الترانيم</button>
@@ -565,7 +565,7 @@
             <button class="btn-big btn-reload" style="flex:1; background:#d35400;" onclick="loadPrepsFromJSON(true)">🔄 تحديث التحضيرات من السيرفر</button>
         </div>
 
-        <button class="btn-big" id="installAppBtn" style="background:#16a085; display:none;" onclick="installApp()">⬇️ تثبيت التطبيق على الجهاز</button>
+        <button class="btn-big" id="installAppBtn" style="background:#16a085;" onclick="installApp()">⬇️ تثبيت التطبيق على الجهاز</button>
         <p id="installAppInstalledMsg" style="display:none; text-align:center; color:#16a085; font-weight:bold;">✅ التطبيق متثبت على الجهاز</p>
         
         <br>
@@ -1192,7 +1192,7 @@
     }
 
     // ============================================================
-    // 🚀 دوال الدمج الذكي للترانيم والتحضيرات السريعة جداً فائقة الأداء O(1)
+    // 🚀 دوال الدمج الذكي فائقة السرعة والأمان O(1)
     // ============================================================
     function loadSongsFromJSON(forceUpdate) {
         var xhr = new XMLHttpRequest();
@@ -1214,7 +1214,6 @@
                     }
 
                     if (serverSongs && Array.isArray(serverSongs)) {
-                        // خريطة سريعة جداً لدمج الترانيم فائقة السرعة للأجهزة القديمة
                         var songMap = {};
                         var mergedSongs = [];
 
@@ -1285,7 +1284,7 @@
                             if (!sPrep || !sPrep.id) continue;
 
                             if (prepMap[sPrep.id]) {
-                                prepMap[sPrep.id] = sPrep;
+                                for (var key in sPrep) prepMap[sPrep.id][key] = sPrep[key];
                             } else {
                                 prepMap[sPrep.id] = sPrep;
                                 mergedPreps.push(sPrep);
@@ -1734,9 +1733,6 @@
         }, 120);
     }
 
-    // ============================================================
-    // 💡 خوارزمية الاقتراحات الخفيفة جدًا لمنع الثقل والتهنيج
-    // ============================================================
     function getRecommendationsPool(currentSong) {
         if (!currentSong) return [];
         var currentKey = (currentSong.key || "No Scale").trim();
@@ -1744,7 +1740,6 @@
         var compatibleKeys = relativeKeysMap[cleanCurrentKey] || [];
         
         var list = [];
-        // تصفية سريعة لمنع معالجة الآلاف من الترانيم دفعة واحدة
         for (var i = 0; i < songs.length; i++) {
             var s = songs[i];
             if (!s || Number(s.id) === Number(currentSong.id)) continue;
@@ -1765,7 +1760,7 @@
             if (isCompatible || isSameKey) {
                 var score = isCompatible ? 100 : 60;
                 list.push({ song: s, score: score });
-                if (list.length >= 80) break; // أقصى حد للتوصيات لتفادي الثقل
+                if (list.length >= 80) break;
             }
         }
 
@@ -3006,9 +3001,33 @@
         document.body.removeChild(textArea);
     }
 
+    // ============================================================
+    // 🎛️ لوحة التحكم وإدارة الترانيم (توليد مباشر بدون أخطاء)
+    // ============================================================
     function openControlPanel() {
         controlPanel.style.display = 'flex';
         if(controlPanel.style.display !== 'flex') controlPanel.style.display = '-webkit-flex';
+        if (panelSearchInput) panelSearchInput.value = '';
+        if (panelFilterKey) panelFilterKey.value = '';
+        if (panelFilterLetter) panelFilterLetter.value = '';
+
+        var validSongs = [];
+        for (var i = 0; i < songs.length; i++) {
+            if (songs[i] && typeof songs[i] === 'object' && songs[i].title) {
+                validSongs.push(songs[i]);
+            }
+        }
+
+        validSongs.sort(function(a, b) {
+            var tA = a.title || "";
+            var tB = b.title || "";
+            return tA.localeCompare(tB);
+        });
+
+        panelFilteredList = validSongs;
+        panelRenderIndex = 0;
+        if (manageList) manageList.innerHTML = "";
+        renderNextPanelBatch();
     }
 
     function closeControlPanel() {
@@ -3025,6 +3044,369 @@
             }
         }
         refreshUI();
+    }
+
+    function searchPanelSongs() {
+        var query = panelSearchInput ? panelSearchInput.value : '';
+        var filterKey = document.getElementById('panelFilterKey').value;
+        var filterLetter = document.getElementById('panelFilterLetter').value;
+        
+        var filtered = [];
+        for(var i=0; i<songs.length; i++) {
+            var s = songs[i];
+            if (!s || !s.title) continue;
+
+            var matchesSearch = true;
+            if (query && query.trim() !== "") {
+                matchesSearch = (calculateSearchScore(s, query) > 0);
+            }
+            
+            var matchesKey = true;
+            if(filterKey !== "") {
+                var sKey = s.key || "No Scale";
+                matchesKey = (sKey === filterKey);
+            }
+
+            var matchesLetter = true;
+            if(filterLetter !== "") {
+                var firstChar = s.title.charAt(0);
+                if(filterLetter === "أ" || filterLetter === "ا") {
+                     matchesLetter = (firstChar === "أ" || firstChar === "ا" || firstChar === "إ" || firstChar === "آ");
+                } else {
+                    matchesLetter = (firstChar.toUpperCase() === filterLetter.toUpperCase());
+                }
+            }
+
+            if(matchesSearch && matchesKey && matchesLetter) {
+                s.tempScore = calculateSearchScore(s, query || "");
+                filtered.push(s);
+            }
+        }
+        
+        if(query && query.trim() !== "") {
+             filtered.sort(function(a, b) { return (b.tempScore || 0) - (a.tempScore || 0); });
+        } else {
+             filtered.sort(function(a, b) { return (a.title || "").localeCompare(b.title || ""); });
+        }
+        
+        panelFilteredList = filtered;
+        panelRenderIndex = 0;
+        if (manageList) manageList.innerHTML = "";
+        
+        if(filtered.length === 0) {
+            if (manageList) manageList.innerHTML = "<p style='text-align:center; color:#888;'>لا توجد نتائج</p>";
+        } else {
+            renderNextPanelBatch();
+        }
+    }
+
+    function renderNextPanelBatch() {
+        var oldBtn = document.getElementById('btnLoadMorePanel');
+        if(oldBtn && oldBtn.parentNode) oldBtn.parentNode.removeChild(oldBtn);
+
+        if (!manageList) return;
+
+        var end = panelRenderIndex + BATCH_SIZE;
+        if(end > panelFilteredList.length) end = panelFilteredList.length;
+
+        for(var i=panelRenderIndex; i<end; i++) {
+            var song = panelFilteredList[i];
+            if (!song) continue;
+
+            (function(s) {
+                var li = document.createElement('li');
+                li.className = 'manage-item';
+                li.id = 'panel-row-' + s.id;
+                
+                var infoBox = document.createElement('div');
+                infoBox.className = 'manage-info-box';
+                infoBox.innerHTML = '<span class="manage-info"><bdi>' + (s.title || "بدون عنوان") + '</bdi></span> <span class="manage-key">' + (s.key || "No Scale") + '</span>';
+
+                var btnsDiv = document.createElement('div');
+                btnsDiv.className = 'manage-btns';
+
+                var btnEdit = document.createElement('button');
+                btnEdit.className = 'btn-edit';
+                btnEdit.innerText = 'تعديل';
+                btnEdit.onclick = function() { openEditModal(s.id); };
+
+                var btnDelete = document.createElement('button');
+                btnDelete.className = 'btn-delete';
+                btnDelete.innerText = 'حذف';
+                btnDelete.onclick = function() { deleteSong(s.id); };
+
+                btnsDiv.appendChild(btnEdit);
+                btnsDiv.appendChild(btnDelete);
+
+                li.appendChild(infoBox);
+                li.appendChild(btnsDiv);
+
+                manageList.appendChild(li);
+            })(song);
+        }
+        
+        panelRenderIndex = end;
+
+        if(panelRenderIndex < panelFilteredList.length) {
+            var btn = document.createElement('button');
+            btn.id = 'btnLoadMorePanel';
+            btn.className = 'load-more-btn';
+            btn.innerText = '⬇️ عرض المزيد (' + (panelFilteredList.length - panelRenderIndex) + ')';
+            btn.onclick = function() { renderNextPanelBatch(); };
+            manageList.appendChild(btn);
+        }
+    }
+
+    function openEditModal(songId) {
+        editModal.style.display = 'flex';
+        if(editModal.style.display !== 'flex') editModal.style.display = '-webkit-flex';
+        var titleField = document.getElementById('editSongTitle');
+        var lyricsField = document.getElementById('editSongLyrics');
+        var keyField = document.getElementById('editSongKey');
+        var idField = document.getElementById('editSongId');
+        var modalTitle = document.getElementById('modalTitle');
+        if(songId) {
+            var song = null;
+            for(var i=0; i<songs.length; i++) { if(Number(songs[i].id) === Number(songId)) { song = songs[i]; break; } }
+            if(song) {
+                idField.value = song.id;
+                titleField.value = song.title;
+                lyricsField.value = song.lyrics;
+                keyField.value = song.key || "No Scale";
+                modalTitle.innerText = "تعديل الترنيمة";
+            }
+        } else {
+            idField.value = "";
+            titleField.value = "";
+            lyricsField.value = "";
+            keyField.value = currentKey === "Preparations" ? "C" : currentKey;
+            modalTitle.innerText = "إضافة ترنيمة جديدة";
+        }
+    }
+
+    function closeEditModal() { editModal.style.display = 'none'; }
+
+    function saveSong() {
+        var id = document.getElementById('editSongId').value;
+        var title = document.getElementById('editSongTitle').value;
+        var lyrics = document.getElementById('editSongLyrics').value;
+        var key = document.getElementById('editSongKey').value;
+        if(!title || !lyrics) { alert("أكمل البيانات"); return; }
+        if(id) {
+            for(var i=0; i<songs.length; i++) {
+                if(Number(songs[i].id) == Number(id)) {
+                    songs[i] = { id: Number(id), title: title, lyrics: lyrics, key: key };
+                    break;
+                }
+            }
+        } else {
+            songs.push({ id: new Date().getTime(), title: title, lyrics: lyrics, key: key });
+        }
+        localStorage.setItem('mySongs', JSON.stringify(songs));
+        closeEditModal();
+        if (panelSearchInput) panelSearchInput.value = '';
+        renderManageList(songs);
+        updateTotalCount();
+        renderKeys();
+    }
+
+    function renderManageList(songsData) {
+         if (controlPanel.style.display === 'flex' || controlPanel.style.display === '-webkit-flex') {
+              openControlPanel();
+         }
+    }
+
+    function deleteSong(id) {
+        if(confirm("هل أنت متأكد من الحذف؟")) {
+            var newSongs = [];
+            for(var i=0; i<songs.length; i++) {
+                if(Number(songs[i].id) !== Number(id)) newSongs.push(songs[i]);
+            }
+            songs = newSongs;
+            localStorage.setItem('mySongs', JSON.stringify(songs));
+            
+            for (var k = 0; k < preparations.length; k++) {
+                var tempIds = [];
+                for (var x = 0; x < preparations[k].songIds.length; x++) {
+                    var item = preparations[k].songIds[x];
+                    var currId = (item && typeof item === 'object') ? item.id : item;
+                    if (Number(currId) !== Number(id)) {
+                        tempIds.push(item);
+                    }
+                }
+                preparations[k].songIds = tempIds;
+            }
+            savePreparations();
+
+            var query = panelSearchInput ? panelSearchInput.value.toLowerCase() : '';
+            if(query) searchPanelSongs(); else renderManageList(songs);
+            updateTotalCount();
+            renderKeys();
+        }
+    }
+
+    // ============================================================
+    // 💾 دوال تصدير واستيراد البيانات المنفصلة
+    // ============================================================
+    function exportSongsData() {
+        try {
+            var dataStr = JSON.stringify(songs);
+            var file = new File([dataStr], "songs_backup.json", {type: "application/json"});
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    files: [file],
+                    title: 'نسخة احتياطية للترانيم',
+                    text: 'ملف الترانيم لتطبيق Scales'
+                }).catch(function() {
+                    fallbackDownload(dataStr, "songs_backup.json");
+                });
+            } else {
+                fallbackDownload(dataStr, "songs_backup.json");
+            }
+        } catch(e) { 
+            alert("عذراً، حدث خطأ أثناء تصدير الترانيم."); 
+        }
+    }
+
+    function exportPrepsData() {
+        try {
+            var dataStr = JSON.stringify(preparations);
+            var file = new File([dataStr], "preparations_backup.json", {type: "application/json"});
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    files: [file],
+                    title: 'نسخة احتياطية للتحضيرات',
+                    text: 'ملف التحضيرات لتطبيق Scales'
+                }).catch(function() {
+                    fallbackDownload(dataStr, "preparations_backup.json");
+                });
+            } else {
+                fallbackDownload(dataStr, "preparations_backup.json");
+            }
+        } catch(e) { 
+            alert("عذراً، حدث خطأ أثناء تصدير التحضيرات."); 
+        }
+    }
+
+    function fallbackDownload(dataStr, fileName) {
+        var blob = new Blob([dataStr], {type: "application/json"});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function importSongsData(input) {
+        var file = input.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var importedData = JSON.parse(e.target.result);
+                var newSongs = null;
+
+                if (importedData && typeof importedData === 'object' && !Array.isArray(importedData) && importedData.songs) {
+                    newSongs = importedData.songs;
+                } else if (Array.isArray(importedData)) {
+                    newSongs = importedData;
+                }
+
+                if (newSongs && Array.isArray(newSongs)) {
+                    if (confirm("هل تريد دمج واستيراد هذه الترانيم إلى قائمتك؟")) {
+                        var songMap = {};
+                        var mergedSongs = [];
+
+                        for (var j = 0; j < songs.length; j++) {
+                            if (songs[j] && songs[j].id) {
+                                songMap[songs[j].id] = songs[j];
+                                mergedSongs.push(songs[j]);
+                            }
+                        }
+
+                        for (var i = 0; i < newSongs.length; i++) {
+                            var sSong = newSongs[i];
+                            if (!sSong || !sSong.id) continue;
+
+                            if (songMap[sSong.id]) {
+                                for(var key in sSong) songMap[sSong.id][key] = sSong[key];
+                            } else {
+                                songMap[sSong.id] = sSong;
+                                mergedSongs.push(sSong);
+                            }
+                        }
+
+                        songs = mergedSongs;
+                        localStorage.setItem('mySongs', JSON.stringify(songs));
+                        alert("تم دمج قائمة الترانيم بنجاح!");
+                        location.reload();
+                    }
+                } else {
+                    alert("محتوى الملف غير صالح للترانيم.");
+                }
+            } catch (err) { 
+                alert("خطأ في قراءة وتحليل الملف"); 
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function importPrepsData(input) {
+        var file = input.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var importedData = JSON.parse(e.target.result);
+                var newPreps = null;
+
+                if (importedData && typeof importedData === 'object' && !Array.isArray(importedData) && importedData.preparations) {
+                    newPreps = importedData.preparations;
+                } else if (Array.isArray(importedData)) {
+                    newPreps = importedData;
+                }
+
+                if (newPreps && Array.isArray(newPreps)) {
+                    if (confirm("هل تريد دمج واستيراد قائمة التحضيرات إلى جهازك؟")) {
+                        var prepMap = {};
+                        var mergedPreps = [];
+
+                        for (var j = 0; j < preparations.length; j++) {
+                            if (preparations[j] && preparations[j].id) {
+                                prepMap[preparations[j].id] = preparations[j];
+                                mergedPreps.push(preparations[j]);
+                            }
+                        }
+
+                        for (var i = 0; i < newPreps.length; i++) {
+                            var sPrep = newPreps[i];
+                            if (!sPrep || !sPrep.id) continue;
+
+                            if (prepMap[sPrep.id]) {
+                                for (var key in sPrep) prepMap[sPrep.id][key] = sPrep[key];
+                            } else {
+                                prepMap[sPrep.id] = sPrep;
+                                mergedPreps.push(sPrep);
+                            }
+                        }
+
+                        preparations = mergedPreps;
+                        localStorage.setItem('myPreparations', JSON.stringify(preparations));
+                        alert("تم دمج قائمة التحضيرات بنجاح!");
+                        location.reload();
+                    }
+                } else {
+                    alert("محتوى الملف غير صالح للتحضيرات.");
+                }
+            } catch (err) { 
+                alert("خطأ في قراءة وتحليل الملف"); 
+            }
+        };
+        reader.readAsText(file);
     }
 
     init();
