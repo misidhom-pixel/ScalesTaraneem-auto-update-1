@@ -1282,7 +1282,17 @@
             .catch(function(err) {});
     }
 
-    function checkAutoUpdatesInBackground() {
+    function checkAutoUpdatesInBackground(forceCheck) {
+        var ONE_DAY_MS = 24 * 60 * 60 * 1000;
+        var lastCheck = parseInt(localStorage.getItem('lastAutoCheckTime'), 10) || 0;
+        var now = new Date().getTime();
+
+        if (!forceCheck && (now - lastCheck) < ONE_DAY_MS) {
+            return; // فحص اتعمل قبل كده خلال آخر 24 ساعة، متعملش تاني
+        }
+
+        localStorage.setItem('lastAutoCheckTime', now);
+
         var songsUrl = (typeof ONLINE_SONGS_URL !== 'undefined' && ONLINE_SONGS_URL.indexOf("http") === 0) ? ONLINE_SONGS_URL : 'songs.json';
         var prepsUrl = (typeof ONLINE_PREPS_URL !== 'undefined' && ONLINE_PREPS_URL.indexOf("http") === 0) ? ONLINE_PREPS_URL : 'preparations.json';
 
