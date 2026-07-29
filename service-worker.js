@@ -1,40 +1,72 @@
-// Service Worker - يخزن كل ملفات التطبيق محليًا عشان يشتغل بدون إنترنت خالص بعد أول فتح
-const CACHE_NAME = "ecg-reports-cache-v4";
+// Service Worker لتطبيق Scales - يشتغل التطبيق أوفلاين بالكامل
+// لو عدّلت في التطبيق، غيّر رقم الإصدار ده عشان الكاش يتحدث عند المستخدمين
+const CACHE_VERSION = 'scales-cache-v3';
 
-// عدّل القائمة دي لو غيرت أسماء الملفات أو ضفت/شلت مكتبة (زي lib/docx.js لو مش محتاجه على الموبايل)
-const FILES_TO_CACHE = [
-    "./",
-    "./index.html",
-    "./xlsx.full.min.js",
-    "./manifest.json",
-    "./icon-192.png",
-    "./icon-512.png"
-    // لو سيبت مكتبة الوورد موجودة ضيف السطرين دول:
-    // ,"./lib/docx.js"
-    // ,"./lib/FileSaver.min.js"
+// الملفات الأساسية اللي لازم تتخزن عشان التطبيق يفتح أوفلاين
+const CORE_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-512-maskable.png'
 ];
 
-// عند التثبيت: يحمّل وينسخ كل الملفات دي في التخزين المحلي
-self.addEventListener("install", (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
-    );
-    self.skipWaiting();
+// ملف الترانيم اختياري (ممكن يكون موجود أو لأ حسب إعداد المستخدم)
+const OPTIONAL_ASSETS = [
+  './songs.json'
+];
+
+self.addEventListener('install', function (event) {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_VERSION).then(function (cache) {
+      // نخزن الملفات الأساسية، ولو ملف اختياري مش موجود منعرقلش التثبيت
+      var allAssets = CORE_ASSETS.concat(OPTIONAL_ASSETS);
+      return Promise.all(
+        allAssets.map(function (url) {
+          return cache.add(url).catch(function () {
+            // تجاهل أي ملف مش موجود بدل ما يفشل التثبيت كله
+          });
+        })
+      );
+    })
+  );
 });
 
-// عند التفعيل: يمسح أي نسخ كاش قديمة من إصدارات سابقة
-self.addEventListener("activate", (event) => {
-    event.waitUntil(
-        caches.keys().then((keys) =>
-            Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-        )
-    );
-    self.clients.claim();
+self.addEventListener('activate', function (event) {
+  event.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(
+        keys.filter(function (key) { return key !== CACHE_VERSION; })
+            .map(function (key) { return caches.delete(key); })
+      );
+    }).then(function () { return self.clients.claim(); })
+  );
 });
 
-// عند كل طلب: يجيب من الكاش المحلي أولاً (يشتغل حتى بدون إنترنت)، ولو مش موجود يحاول ينزله من النت
-self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        caches.match(event.request).then((cached) => cached || fetch(event.request))
-    );
+self.addEventListener('fetch', function (event) {
+  var req = event.request;
+
+  if (req.method !== 'GET') return;
+
+  var url = new URL(req.url);
+
+  // اطلبات لمصادر تانية (زي تحديث الترانيم من GitHub) سيبها تروح للنت عادي من غير تدخل من الكاش
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // باقي ملفات التطبيق (index.html, manifest, icons, songs.json): كاش أول لسرعة الفتح، ولو مش موجود نجيب من النت ونخزنه
+  // ملاحظة: تحديث الترانيم الفعلي بيحصل بس لما تدوس زرار "تحديث من السيرفر" (بيروح مباشرة لرابط GitHub بره الكاش ده)
+  event.respondWith(
+    caches.match(req).then(function (cached) {
+      if (cached) return cached;
+      return fetch(req).then(function (res) {
+        var resClone = res.clone();
+        caches.open(CACHE_VERSION).then(function (cache) { cache.put(req, resClone); });
+        return res;
+      });
+    })
+  );
 });
