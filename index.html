@@ -1259,7 +1259,7 @@
             .then(function(response) {
                 if (!response.ok) return;
                 
-                var remoteEtag = response.headers.get('etag') || response.headers.get('last-modified');
+                var remoteEtag = response.headers.get('etag') || response.headers.get('last-modified') || response.headers.get('content-length');
 
                 if (savedEtag && remoteEtag && savedEtag === remoteEtag) {
                     return;
