@@ -1345,32 +1345,49 @@
         localStorage.setItem('mySongs', JSON.stringify(songs));
     }
 
-    function mergePrepsData(serverPreps) {
-        if (!serverPreps || !Array.isArray(serverPreps)) return;
-        var prepMap = {};
-        var mergedPreps = [];
+    function mergePrepsData(serverPreps, serverHistory) {
+        if (serverPreps && Array.isArray(serverPreps)) {
+            var prepMap = {};
+            var mergedPreps = [];
 
-        for (var j = 0; j < preparations.length; j++) {
-            if (preparations[j] && preparations[j].id) {
-                prepMap[preparations[j].id] = preparations[j];
-                mergedPreps.push(preparations[j]);
+            for (var j = 0; j < preparations.length; j++) {
+                if (preparations[j] && preparations[j].id) {
+                    prepMap[preparations[j].id] = preparations[j];
+                    mergedPreps.push(preparations[j]);
+                }
             }
+
+            for (var i = 0; i < serverPreps.length; i++) {
+                var sPrep = serverPreps[i];
+                if (!sPrep || !sPrep.id) continue;
+
+                if (prepMap[sPrep.id]) {
+                    for (var key in sPrep) prepMap[sPrep.id][key] = sPrep[key];
+                } else {
+                    prepMap[sPrep.id] = sPrep;
+                    mergedPreps.push(sPrep);
+                }
+            }
+
+            preparations = mergedPreps;
+            localStorage.setItem('myPreparations', JSON.stringify(preparations));
         }
 
-        for (var i = 0; i < serverPreps.length; i++) {
-            var sPrep = serverPreps[i];
-            if (!sPrep || !sPrep.id) continue;
-
-            if (prepMap[sPrep.id]) {
-                for (var key in sPrep) prepMap[sPrep.id][key] = sPrep[key];
-            } else {
-                prepMap[sPrep.id] = sPrep;
-                mergedPreps.push(sPrep);
+        if (serverHistory && Array.isArray(serverHistory)) {
+            var historyIds = {};
+            for (var h = 0; h < serviceTimeHistory.length; h++) {
+                if (serviceTimeHistory[h] && serviceTimeHistory[h].id) historyIds[serviceTimeHistory[h].id] = true;
             }
+            for (var k = 0; k < serverHistory.length; k++) {
+                var sEntry = serverHistory[k];
+                if (sEntry && sEntry.id && !historyIds[sEntry.id]) {
+                    serviceTimeHistory.push(sEntry);
+                    historyIds[sEntry.id] = true;
+                }
+            }
+            serviceTimeHistory.sort(function(a, b) { return b.date - a.date; });
+            localStorage.setItem('serviceTimeHistory', JSON.stringify(serviceTimeHistory));
         }
-
-        preparations = mergedPreps;
-        localStorage.setItem('myPreparations', JSON.stringify(preparations));
     }
 
     function checkFileUpdateSilently(urlToFetch, etagStorageKey, onUpdateCallback) {
@@ -1393,7 +1410,7 @@
                     .then(function(importedData) {
                         var items = Array.isArray(importedData) ? importedData : (importedData.songs || importedData.preparations || null);
                         if (items && Array.isArray(items)) {
-                            onUpdateCallback(items);
+                            onUpdateCallback(items, importedData);
                             if (remoteEtag) {
                                 localStorage.setItem(etagStorageKey, remoteEtag);
                             }
@@ -1423,8 +1440,8 @@
             mergeSongsData(newSongs);
         });
 
-        checkFileUpdateSilently(prepsUrl, 'preps_etag', function(newPreps) {
-            mergePrepsData(newPreps);
+        checkFileUpdateSilently(prepsUrl, 'preps_etag', function(newPreps, fullData) {
+            mergePrepsData(newPreps, fullData ? fullData.serviceHistory : null);
         });
     }
 
@@ -1451,8 +1468,9 @@
             .then(function(res) { return res.json(); })
             .then(function(importedData) {
                 var serverPreps = Array.isArray(importedData) ? importedData : (importedData.preparations || null);
+                var serverHistory = (importedData && !Array.isArray(importedData)) ? importedData.serviceHistory : null;
                 if (serverPreps && Array.isArray(serverPreps)) {
-                    mergePrepsData(serverPreps);
+                    mergePrepsData(serverPreps, serverHistory);
                     refreshUI();
                     if (forceUpdate) alert("تم دمج وتحديث التحضيرات من السيرفر بنجاح!");
                 }
@@ -3419,7 +3437,7 @@
 
     function exportPrepsData() {
         try {
-            var dataStr = JSON.stringify(preparations);
+            var dataStr = JSON.stringify({ preparations: preparations, serviceHistory: serviceTimeHistory });
             var file = new File([dataStr], "preparations_backup.json", {type: "application/json"});
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -3488,16 +3506,18 @@
             try {
                 var importedData = JSON.parse(e.target.result);
                 var newPreps = null;
+                var newHistory = null;
 
                 if (importedData && typeof importedData === 'object' && !Array.isArray(importedData) && importedData.preparations) {
                     newPreps = importedData.preparations;
+                    newHistory = importedData.serviceHistory || null;
                 } else if (Array.isArray(importedData)) {
                     newPreps = importedData;
                 }
 
                 if (newPreps && Array.isArray(newPreps)) {
                     if (confirm("هل تريد دمج واستيراد قائمة التحضيرات إلى جهازك؟")) {
-                        mergePrepsData(newPreps);
+                        mergePrepsData(newPreps, newHistory);
                         alert("تم دمج قائمة التحضيرات بنجاح!");
                         location.reload();
                     }
