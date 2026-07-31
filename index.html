@@ -561,8 +561,10 @@
             <button class="btn-big btn-reload" style="flex:1; background:#d35400;" onclick="loadPrepsFromJSON(true)">🔄 تحديث التحضيرات من السيرفر</button>
         </div>
 
-        <button class="btn-big" id="installAppBtn" style="background:#16a085;" onclick="installApp()">⬇️ تثبيت التطبيق على الجهاز</button>
-        <button class="btn-big" style="background:#34495e;" onclick="openServiceHistoryModal()">⏱ سجل أوقات الخدمات</button>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <button class="btn-big" id="installAppBtn" style="flex:1; background:#16a085; margin-bottom:0;" onclick="installApp()">⬇️ تثبيت التطبيق</button>
+            <button class="btn-big" style="flex:1; background:#34495e; margin-bottom:0;" onclick="openServiceHistoryModal()">⏱ سجل أوقات الخدمات</button>
+        </div>
         <p id="installAppInstalledMsg" style="display:none; text-align:center; color:#16a085; font-weight:bold;">✅ التطبيق متثبت على الجهاز</p>
         
         <br>
