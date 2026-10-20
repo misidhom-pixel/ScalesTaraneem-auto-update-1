@@ -1,5 +1,5 @@
 // Service Worker لتطبيق Scales - يعمل التطبيق أوفلاين بالكامل
-const CACHE_VERSION = 'scales-cache-v8';
+const CACHE_VERSION = 'scales-cache-v9';
 
 // الملفات الأساسية التي يجب تخزينها لفتح التطبيق أوفلاين
 const CORE_ASSETS = [
@@ -54,6 +54,29 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
+  var isAppFile = req.mode === 'navigate' ||
+                  /\.(html|json|js)$/i.test(url.pathname) ||
+                  url.pathname.endsWith('/');
+
+  if (isAppFile) {
+    // الشبكة أولًا: دايمًا أحدث نسخة من GitHub، ولو مفيش نت نفتح النسخة المحفوظة
+    event.respondWith(
+      fetch(req, { cache: 'no-cache' }).then(function (res) {
+        if (res && res.ok) {
+          var resClone = res.clone();
+          caches.open(CACHE_VERSION).then(function (cache) { cache.put(req, resClone); });
+        }
+        return res;
+      }).catch(function () {
+        return caches.match(req).then(function (cached) {
+          return cached || caches.match('./index.html');
+        });
+      })
+    );
+    return;
+  }
+
+  // باقي الملفات (الأيقونات والصور): الكاش أولًا
   event.respondWith(
     caches.match(req).then(function (cached) {
       if (cached) return cached;
